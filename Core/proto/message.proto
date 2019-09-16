@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package lchain.core;
+
+message Message {
+    required int32 id = 1;
+}
