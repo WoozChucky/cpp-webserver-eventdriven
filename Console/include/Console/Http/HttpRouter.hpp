@@ -8,14 +8,26 @@
 #include <Console/Http/HttpRequest.hpp>
 #include <Console/Http/HttpResponse.hpp>
 #include <map>
+#include <string>
 
 typedef std::function<void(HttpRequest* request, HttpResponse* response)> HttpHandler;
 
-typedef std::map<std::string, HttpHandler> Route;
+typedef std::map<HttpMethod, HttpHandler> Route;
+
+typedef std::map<std::string, Route> Routes;
 
 class HttpRouter {
 
+public:
+    void AddRoute(const std::string& path, const HttpHandler& handler);
+    void AddRoute(const std::string& path, HttpMethod method, HttpHandler handler);
 
+    HttpHandler GetHandler(const std::string& path, HttpMethod method);
+    HttpHandler GetHandler(const std::string& path);
+
+private:
+
+    Routes _routes;
 
 };
 

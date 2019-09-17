@@ -1,0 +1,12 @@
+- Think of a name for the project! duh! (suggestions are welcome)
+- In the future, separate project in multiple libraries with well defined layers (i.e:)
+    * TcpServer (Lib)
+    * WebServer (Lib)
+    * ConsoleApp (Executable)
+- Rename root CMakeLists.txt project name
+- Remove self-signed certificates from VCS
+- Fix GitHub actions for CI at least
+- Add tests for the libraries with Googletest framework
+- Add abstraction layer for the event system (at the moment using kqueue for BSD systems)
+- Develop dynamic libraries runtime load for http handlers
+- Refactor all the typedefs scattered along multiple headers

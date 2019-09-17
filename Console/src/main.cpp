@@ -33,13 +33,13 @@ int main() {
 
     http->Handle("/",
             [](HttpRequest* request, HttpResponse* response) -> void {
-
+        // do stuff
     });
 
     http->Handle("/register",
             HttpMethod::POST,
             [](HttpRequest* request, HttpResponse* response) -> void {
-
+        // do stuff
     });
 
     http->Boot();

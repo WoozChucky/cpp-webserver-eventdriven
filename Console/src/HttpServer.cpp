@@ -8,6 +8,7 @@
 HttpServer::HttpServer() {
     this->server = nullptr;
     this->eventManager = nullptr;
+    this->router = new HttpRouter();
 }
 
 void HttpServer::Boot() {
@@ -55,13 +56,23 @@ void HttpServer::Boot() {
                     req.buffer.data);
         }
 
-        std::string response = "HTTP/1.1 200 OK\r\n"
-                               "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                               "Connection: close\r\n"
-                               "\r\n"
-                               "{\"obj\": true}";
+        // TODO(Levezinho):
+        // Parse the context buffer to a "real" http request (check RFC)
+        // either add try-catch to router->GetHandler, or make it return a ptr/nullptr anc check that instead.
 
-        this->server->GetChannel()->Write(ctx, (void *) response.c_str(), response.size());
+        HttpRequest request{};
+        HttpResponse response{};
+
+        this->router->GetHandler("/")(&request, &response);
+
+
+        std::string responseString =   "HTTP/1.1 200 OK\r\n"
+                                       "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+                                       "Connection: close\r\n"
+                                       "\r\n"
+                                       "{\"obj\": true}";
+
+        this->server->GetChannel()->Write(ctx, (void *) responseString.c_str(), responseString.size());
         this->server->HandleDisconnectionEvent(ctx);
 
     });
@@ -69,14 +80,10 @@ void HttpServer::Boot() {
     this->server->Boot();
 }
 
-void HttpServer::Handle(std::string path, HttpHandler handler) {
-
-    if (this->router.count(path) < 1) {
-        this->router[path] = std::move(handler);
-    }
-
+void HttpServer::Handle(const std::string& path, const HttpHandler& handler) {
+    this->router->AddRoute(path, handler);
 }
 
-void HttpServer::Handle(std::string path, HttpMethod method, HttpHandler handler) {
-
+void HttpServer::Handle(const std::string& path, HttpMethod method, HttpHandler handler) {
+    this->router->AddRoute(path, method, std::move(handler));
 }
