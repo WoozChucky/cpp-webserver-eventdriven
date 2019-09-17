@@ -13,7 +13,7 @@ public:
 
     void AcceptConnection(SocketHandle handle, bool, Context* outContext) override;
     void DisposeConnection(Context* ctx) override;
-    size_t Read(Context* ctx, void* data, size_t dataLength) override;
+    size_t Read(Context* ctx, char** data, size_t dataLength) override;
     size_t Write(Context* ctx,void* data, size_t dataLength) override;
 
 };

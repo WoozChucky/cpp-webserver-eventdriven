@@ -16,7 +16,7 @@ public:
     virtual void AcceptConnection(SocketHandle handle, bool secureConnection, Context* outContext) = 0;
     virtual void DisposeConnection(Context* ctx) = 0;
     virtual size_t Write(Context* ctx,void* data, size_t dataLength) = 0;
-    virtual size_t Read(Context* ctx, void* data, size_t dataLength) = 0;
+    virtual size_t Read(Context* ctx, char** data, size_t dataLength) = 0;
 
 };
 

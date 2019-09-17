@@ -30,8 +30,9 @@ void NormalChannel::DisposeConnection(Context* ctx) {
 
 }
 
-size_t NormalChannel::Read(Context* ctx, void *data, size_t dataLength) {
+size_t NormalChannel::Read(Context* ctx, char **data, size_t dataLength) {
 
+    //TODO: Fix ME
     return recv(ctx->socket.handle, data, dataLength, 0);
 
 }

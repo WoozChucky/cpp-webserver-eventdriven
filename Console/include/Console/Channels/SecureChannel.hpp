@@ -6,19 +6,37 @@
 #define SECURECHANNEL_HPP
 
 #include <Console/Channels/IChannel.hpp>
+#include <tls.h>
+#include <mutex>
 
 class SecureChannel : public IChannel {
 
 public:
 
+    explicit SecureChannel();
+
     void AcceptConnection(SocketHandle handle, bool secureConnection, Context* outContext) override;
     void DisposeConnection(Context* ctx) override;
-    size_t Read(Context* ctx, void* data, size_t dataLength) override;
+    size_t Read(Context* ctx, char **data, size_t dataLength) override;
     size_t Write(Context* ctx,void* data, size_t dataLength) override;
 
 private:
+    TLS* _serverTls{};
+    TLSConfig* _tlsConfig{};
+    std::mutex _mutex;
 
-    static void InitializeSLLContext(SocketHandle  handle, SSLContext* pContext);
+    const uint8_t *privateKey{};
+    size_t privateKeySize{};
+
+    const uint8_t *publicKey{};
+    size_t publicKeySize{};
+
+    std::vector<char> pub;
+    std::vector<char> key;
+
+    void LoadPrivateKey(const char* filename);
+    void LoadPublicKey(const char* filename);
+    void prepare();
 
 };
 

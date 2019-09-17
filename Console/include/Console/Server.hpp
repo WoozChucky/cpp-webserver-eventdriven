@@ -19,10 +19,11 @@ class Server {
 public:
 
     Server();
+    explicit Server(ServerConfiguration* configuration);
 
     void Setup();
     void Boot();
-    void SetOptions(uint serverPort, std::vector<int> socketOptions, bool sslEnabled);
+    void SetConfiguration(ServerConfiguration* configuration);
     void SetEventManager(EventManager* eventManager);
 
     void OnMessage(OnMessageDelegate delegate);
@@ -34,14 +35,14 @@ public:
 
 private:
     SocketAddressIn serverAddress;
-    int serverSocket;
-    uint maxConnections;
-    uint port;
-    std::vector<int> serverOptions;
+    SocketHandle serverSocket;
     EventManager* manager;
     IChannel* channel;
     MemoryPool* connectionsMemPool;
-    bool secure;
+    MemoryPool* readBufferMemPool;
+    bool running;
+
+    ServerConfiguration* _configuration;
 
     int GetHandle();
     bool SetSocketOption(int option);
@@ -49,7 +50,7 @@ private:
     void HandleConnections();
 
     void HandleNewConnectionEvent();
-    void HandleMessageEvent(Context *handle, char* buffer, int bufferSize, ssize_t bytesRead);
+    void HandleMessageEvent(Context *handle, char** buffer, int bufferSize);
 
     OnMessageDelegate messageDelegate;
     OnClientDelegate clientConnectedDelegate;

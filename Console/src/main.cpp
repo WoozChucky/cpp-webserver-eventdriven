@@ -27,16 +27,22 @@ The non-blocking tcp server can be implemented as follows:
 
 #include <Console/HttpServer.hpp>
 
-#include <openssl/crypto.h>
-#include <openssl/x509.h>
-#include <openssl/ssl.h>
-
 int main() {
 
-    SSL_load_error_strings();
-    OpenSSL_add_ssl_algorithms();
+    auto http = new HttpServer();
 
-    HttpServer().Boot();
+    http->Handle("/",
+            [](HttpRequest* request, HttpResponse* response) -> void {
+
+    });
+
+    http->Handle("/register",
+            HttpMethod::POST,
+            [](HttpRequest* request, HttpResponse* response) -> void {
+
+    });
+
+    http->Boot();
 
     return 0;
 }

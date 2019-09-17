@@ -66,6 +66,9 @@ if(ParentDirectory STREQUAL "")
     # Suppress Microsoft warnings about functions being
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 
+    # Add modules path dir
+    set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+
     # Google Test
     set(BUILD_GTEST ON CACHE BOOL "Builds the googletest subproject" FORCE)
     set(BUILD_GMOCK ON CACHE BOOL "Builds the googlemock subproject" FORCE)

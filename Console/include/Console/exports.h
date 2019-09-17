@@ -8,7 +8,8 @@
 #include <netinet/in.h>
 #include <sys/event.h>
 #include <string>
-#include <openssl/ossl_typ.h>
+#include <tls.h>
+#include <vector>
 
 typedef int SocketHandle;
 typedef int EventHandle;
@@ -17,12 +18,21 @@ typedef struct sockaddr SocketAddress;
 typedef struct sockaddr_in SocketAddressIn;
 typedef struct sockaddr_in6 SocketAddressIn6;
 typedef struct sockaddr_storage SocketStorage;
+typedef struct tls TLS;
+typedef struct tls_config TLSConfig;
 
 enum IPType {
     Unsupported = 0x00,
     IPv4 = 0x04,
     IPv6 = 0x08
 };
+
+typedef struct {
+    std::vector<int> SocketOptions;
+    uint ServerPort;
+    uint MaxQueuedConnections;
+    bool SSLEnabled;
+} ServerConfiguration ;
 
 typedef struct Buffer {
     int size;
@@ -48,14 +58,9 @@ typedef struct Message {
 
 } Message;
 
-typedef struct SSLContext {
-    SSL* ptr {nullptr};
-    SSL_CTX* ctx {nullptr};
-} SSLContext;
-
 typedef struct {
     ClientSocket socket {0, 0, nullptr, IPType::Unsupported};
-    SSLContext ssl{nullptr, nullptr};
+    TLS* tls{nullptr};
     bool secure = false;
 } Context;
 

@@ -17,35 +17,43 @@
 #include <openssl/err.h>
 
 Server::Server()
-    : maxConnections(0), serverSocket(0), serverAddress{}, port(0),
-    serverOptions{}, secure(false), manager{nullptr}, channel{nullptr},
-      connectionsMemPool{new MemoryPool(sizeof(Context), 3, 100)}
+    : serverSocket(0), serverAddress{}, manager{nullptr}, channel{nullptr},
+      connectionsMemPool{new MemoryPool(sizeof(Context), 3, 100)},
+      readBufferMemPool{new MemoryPool(sizeof(char *), 3, 100)},
+      _configuration{nullptr}, running{false}
     {
 
 }
 
-void Server::SetOptions(uint serverPort, std::vector<int> socketOptions, bool sslEnabled) {
-    this->serverOptions = std::move(socketOptions);
-    this->port = serverPort;
-    this->secure = sslEnabled;
+Server::Server(ServerConfiguration* configuration)
+    : serverSocket{0}, serverAddress{}, manager{nullptr}, channel{nullptr},
+    connectionsMemPool{new MemoryPool(sizeof(Context), 3, 100)},
+    readBufferMemPool{new MemoryPool(sizeof(char *), 3, 100)},
+    running{false}, _configuration{configuration}{
+    assert(configuration != nullptr);
+}
+
+void Server::SetConfiguration(ServerConfiguration *configuration) {
+    assert(configuration != nullptr);
+    this->_configuration = configuration;
 }
 
 void Server::Setup() {
 
     this->serverAddress.sin_family = AF_INET;
-    this->serverAddress.sin_port = htons(this->port);
+    this->serverAddress.sin_port = htons(this->_configuration->ServerPort);
     this->serverAddress.sin_addr.s_addr = INADDR_ANY;
     bzero(&(this->serverAddress.sin_zero), sizeof(this->serverAddress.sin_zero));
 
     this->serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    for(auto option : this->serverOptions) {
+    for(auto option : this->_configuration->SocketOptions) {
         if (!this->SetSocketOption(option)) {
             fprintf(stdout, "Failed to set socket option %d.\n", option);
         }
     }
 
-    if (this->secure) {
+    if (this->_configuration->SSLEnabled) {
         this->channel = new SecureChannel();
     } else {
         this->channel = new NormalChannel();
@@ -62,12 +70,14 @@ void Server::Boot() {
         close(this->serverSocket);
     }
 
-    if (listen(this->serverSocket, this->maxConnections) == -1) {
+    if (listen(this->serverSocket, this->_configuration->MaxQueuedConnections) == -1) {
         perror("listen()");
         close(this->serverSocket);
     }
 
     this->manager->RegisterEvent(this->GetHandle(), EventType::Read, EventAction::Add);
+
+    this->running = true;
 
     this->HandleConnections();
 }
@@ -116,10 +126,9 @@ void Server::HandleConnections() {
     int maxEvents = 32;
     auto evtList = static_cast<Event *>(malloc(sizeof(Event) * maxEvents));
     int nEvents = 0;
-    ssize_t bytesRead = 0;
-    char* buffer = static_cast<char *>(malloc(sizeof(char) * 20));
+    char** buffer = static_cast<char **>(malloc(sizeof(char *))); //this->readBufferMemPool->Allocate<char *>(); //
 
-    while (true) {
+    while (this->running) {
 
         nEvents = this->manager->GetFiredNotifications(evtList, maxEvents);
 
@@ -142,12 +151,19 @@ void Server::HandleConnections() {
 
                 auto ctx = reinterpret_cast<Context *>(event.udata);
 
-                this->HandleMessageEvent(ctx, buffer, 20, bytesRead);
+                try {
+                    this->HandleMessageEvent(ctx, buffer, sysconf(_SC_PAGESIZE));
+                } catch (...) {
+                    fprintf(stderr, "Error HandleMessageEvent\n");
+                }
             }
         }
 
     }
 
+    free(evtList);
+    free(*buffer);
+    free(buffer);
 }
 
 void Server::HandleDisconnectionEvent(Context *ctx) {
@@ -176,9 +192,9 @@ void Server::OnClientDisconnected(OnClientDelegate delegate) {
 void Server::HandleNewConnectionEvent() {
 
     // accept the client
-    auto* ctx = this->connectionsMemPool->Allocate<Context>(); // static_cast<Context *>(this->memPool->GetMemory());
+    auto* ctx = this->connectionsMemPool->Allocate<Context>();
 
-    this->channel->AcceptConnection(this->GetHandle(), this->secure, ctx);
+    this->channel->AcceptConnection(this->GetHandle(), this->_configuration->SSLEnabled, ctx);
 
     if (this->clientConnectedDelegate != nullptr)
         this->clientConnectedDelegate(ctx);
@@ -187,16 +203,16 @@ void Server::HandleNewConnectionEvent() {
     this->manager->RegisterEvent(ctx, EventType::Read, EventAction::Add, true);
 }
 
-void Server::HandleMessageEvent(Context *ctx, char* buffer, int bufferSize, ssize_t bytesRead) {
+void Server::HandleMessageEvent(Context *ctx, char** buffer, int bufferSize) {
 
-    bytesRead = this->channel->Read(ctx, buffer, bufferSize);
+    auto bytesRead = this->channel->Read(ctx, buffer, bufferSize);
 
     if (bytesRead > 0) {
 
         if (this->messageDelegate != nullptr) {
 
             Message message {
-                    static_cast<int>(bytesRead), buffer
+                    static_cast<int>(bytesRead), *buffer
             };
 
             this->messageDelegate(ctx, message);
@@ -216,6 +232,5 @@ void Server::HandleMessageEvent(Context *ctx, char* buffer, int bufferSize, ssiz
 IChannel * Server::GetChannel() {
     return this->channel;
 }
-
 
 #pragma clang diagnostic pop

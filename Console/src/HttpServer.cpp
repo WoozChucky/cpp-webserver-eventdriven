@@ -3,9 +3,11 @@
 //
 
 #include <Console/HttpServer.hpp>
+#include <utility>
 
 HttpServer::HttpServer() {
     this->server = nullptr;
+    this->eventManager = nullptr;
 }
 
 void HttpServer::Boot() {
@@ -15,24 +17,29 @@ void HttpServer::Boot() {
             ->WithReuseAddress()
             ->WithReusePort()
             ->WithKeepAlive()
+            ->WithMaxQueuedConnection(100)
+            ->WithServerPort(443)
+            ->WithSSL(true)
             ->Build();
 
     this->eventManager = new EventManager();
-    this->server = new Server();
+    this->server = new Server(options);
 
-    this->server->SetOptions(443, options, true);
     this->server->SetEventManager(this->eventManager);
     this->server->Setup();
 
     this->server->OnClientConnected([](Context* ctx) -> void {
-        fprintf(stdout, "Client %d has connected from %s:%d\n",
+        fprintf(stdout, "\t[%d][%s:%d] - CONNECTION\n",
                 ctx->socket.handle,
                 ctx->socket.address.c_str(),
                 ctx->socket.port);
     });
 
     this->server->OnClientDisconnected([](Context* ctx) -> void {
-        fprintf(stdout, "Client %d has disconnected\n", ctx->socket.handle);
+        fprintf(stdout, "\t[%d][%s:%d] - DISCONNECTION\n",
+                ctx->socket.handle,
+                ctx->socket.address.c_str(),
+                ctx->socket.port);
 
 
 
@@ -40,10 +47,8 @@ void HttpServer::Boot() {
 
     this->server->OnMessage([this](Context* ctx, Message req) -> void {
 
-        fprintf(stdout, "Client %d has sent a message.\n", ctx->socket.handle);
-
         if (ctx->socket.handle > 0) {
-            fprintf(stdout, "\t[%d][%s:%d]\n%s\n",
+            fprintf(stdout, "\t[%d][%s:%d] - PACKET\n--- PACKET START\n%s\n--- PACKET END\n",
                     ctx->socket.handle,
                     ctx->socket.address.c_str(),
                     ctx->socket.port,
@@ -62,4 +67,16 @@ void HttpServer::Boot() {
     });
 
     this->server->Boot();
+}
+
+void HttpServer::Handle(std::string path, HttpHandler handler) {
+
+    if (this->router.count(path) < 1) {
+        this->router[path] = std::move(handler);
+    }
+
+}
+
+void HttpServer::Handle(std::string path, HttpMethod method, HttpHandler handler) {
+
 }
