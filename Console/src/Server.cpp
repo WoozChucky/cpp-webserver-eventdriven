@@ -19,7 +19,6 @@
 Server::Server()
     : serverSocket(0), serverAddress{}, manager{nullptr}, channel{nullptr},
       connectionsMemPool{new MemoryPool(sizeof(Context), 3, 100)},
-      readBufferMemPool{new MemoryPool(sizeof(char *), 3, 100)},
       _configuration{nullptr}, running{false}
     {
 
@@ -28,7 +27,6 @@ Server::Server()
 Server::Server(ServerConfiguration* configuration)
     : serverSocket{0}, serverAddress{}, manager{nullptr}, channel{nullptr},
     connectionsMemPool{new MemoryPool(sizeof(Context), 3, 100)},
-    readBufferMemPool{new MemoryPool(sizeof(char *), 3, 100)},
     running{false}, _configuration{configuration}{
     assert(configuration != nullptr);
 }
@@ -39,6 +37,7 @@ void Server::SetConfiguration(ServerConfiguration *configuration) {
 }
 
 void Server::Setup() {
+    assert(this->_configuration != nullptr);
 
     this->serverAddress.sin_family = AF_INET;
     this->serverAddress.sin_port = htons(this->_configuration->ServerPort);
@@ -62,6 +61,7 @@ void Server::Setup() {
 }
 
 void Server::Boot() {
+    assert(this->_configuration != nullptr);
 
     fcntl(this->serverSocket, F_SETFL, O_NONBLOCK); // Mark server socket as non blocking
 
@@ -104,7 +104,7 @@ bool Server::GetSocketOption(int option) {
     auto error = getsockopt(this->serverSocket, SOL_SOCKET, option, &optval, &optlen) < 0;
 
     if (error) {
-        perror("setsockpot()");
+        perror("getsockopt()");
         close(this->serverSocket);
     }
 
@@ -126,7 +126,6 @@ void Server::HandleConnections() {
     int maxEvents = 32;
     auto evtList = static_cast<Event *>(malloc(sizeof(Event) * maxEvents));
     int nEvents = 0;
-    char** buffer = static_cast<char **>(malloc(sizeof(char *))); //this->readBufferMemPool->Allocate<char *>(); //
 
     while (this->running) {
 
@@ -152,7 +151,7 @@ void Server::HandleConnections() {
                 auto ctx = reinterpret_cast<Context *>(event.udata);
 
                 try {
-                    this->HandleMessageEvent(ctx, buffer, sysconf(_SC_PAGESIZE));
+                    this->HandleMessageEvent(ctx);
                 } catch (...) {
                     fprintf(stderr, "Error HandleMessageEvent\n");
                 }
@@ -162,8 +161,6 @@ void Server::HandleConnections() {
     }
 
     free(evtList);
-    free(*buffer);
-    free(buffer);
 }
 
 void Server::HandleDisconnectionEvent(Context *ctx) {
@@ -194,7 +191,7 @@ void Server::HandleNewConnectionEvent() {
     // accept the client
     auto* ctx = this->connectionsMemPool->Allocate<Context>();
 
-    this->channel->AcceptConnection(this->GetHandle(), this->_configuration->SSLEnabled, ctx);
+    this->channel->AcceptConnection(this->GetHandle(), ctx);
 
     if (this->clientConnectedDelegate != nullptr)
         this->clientConnectedDelegate(ctx);
@@ -203,19 +200,15 @@ void Server::HandleNewConnectionEvent() {
     this->manager->RegisterEvent(ctx, EventType::Read, EventAction::Add, true);
 }
 
-void Server::HandleMessageEvent(Context *ctx, char** buffer, int bufferSize) {
+void Server::HandleMessageEvent(Context *ctx) {
 
-    auto bytesRead = this->channel->Read(ctx, buffer, bufferSize);
+    auto buffer = this->channel->Read(ctx);
 
-    if (bytesRead > 0) {
+    if (!buffer.empty()) {
 
         if (this->messageDelegate != nullptr) {
 
-            Message message {
-                    static_cast<int>(bytesRead), *buffer
-            };
-
-            this->messageDelegate(ctx, message);
+            this->messageDelegate(ctx, buffer);
 
         } else {
             fprintf(stdout, "Received a message, but no message delegate was defined.\n");
@@ -224,8 +217,6 @@ void Server::HandleMessageEvent(Context *ctx, char** buffer, int bufferSize) {
     } else {
         fprintf(stdout, "Received a message, but no bytes could be read.\n");
     }
-
-    memset(buffer, 0, bufferSize);
 
 }
 

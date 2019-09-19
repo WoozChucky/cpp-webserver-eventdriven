@@ -61,11 +61,12 @@ void SecureChannel::prepare() {
 }
 
 SecureChannel::SecureChannel() {
+    this->memoryPool = new MemoryPool(4096, 5, 100);
     LoadPublicKey("cert.pem");
     LoadPrivateKey("key.pem");
 }
 
-void SecureChannel::AcceptConnection(SocketHandle handle, bool secureConnection, Context* outContext) {
+void SecureChannel::AcceptConnection(SocketHandle handle, Context* outContext) {
 
     prepare();
 
@@ -90,9 +91,7 @@ void SecureChannel::AcceptConnection(SocketHandle handle, bool secureConnection,
 
 void SecureChannel::DisposeConnection(Context* ctx) {
 
-    std::lock_guard<std::mutex> lock{_mutex};
-
-    fprintf(stderr, "Gonna dispose connection\n");
+    // std::lock_guard<std::mutex> lock{_mutex};
 
     auto ret = tls_close(ctx->tls);
 
@@ -102,7 +101,6 @@ void SecureChannel::DisposeConnection(Context* ctx) {
 
     tls_free(ctx->tls);
     close(ctx->socket.handle);
-    fprintf(stderr, "Disposed connection\n");
 
     tls_close(this->_serverTls);
     tls_free(this->_serverTls);
@@ -113,40 +111,34 @@ void SecureChannel::DisposeConnection(Context* ctx) {
     this->_tlsConfig = nullptr;
 }
 
-size_t SecureChannel::Read(Context* ctx, char **data, size_t dataLength) {
+std::string SecureChannel::Read(Context *ctx) {
 
     auto totalReadBytes = 0;
     auto lastReadBytes = TLS_WANT_POLLIN;
 
     std::string fullBufferedRequest;
 
-    char* readStream = static_cast<char *>(malloc(sizeof(char) * dataLength));
+    auto readStream = this->memoryPool->Allocate<char>();
 
     while (lastReadBytes == TLS_WANT_POLLIN && totalReadBytes == 0) {
 
-        lastReadBytes = tls_read(ctx->tls, readStream, dataLength);
+        lastReadBytes = tls_read(ctx->tls, readStream, this->memoryPool->BlockSize());
 
         if (lastReadBytes >= 0)
             totalReadBytes += lastReadBytes;
 
         fullBufferedRequest.append(readStream);
 
-        memset(readStream, 0, dataLength);
+        memset(readStream, 0, this->memoryPool->BlockSize());
     }
 
-    dataLength = (sizeof(char) * totalReadBytes) + 1;
+    this->memoryPool->Release(readStream);
 
-    *data = static_cast<char *>(malloc(dataLength));
-
-    memcpy(*data, fullBufferedRequest.data(), dataLength);
-
-    free(readStream);
-
-    return totalReadBytes;
-
+    return fullBufferedRequest;
 }
 
 size_t SecureChannel::Write(Context* ctx, void *data, size_t dataLength) {
+
 
     return tls_write(ctx->tls, data, dataLength);
 

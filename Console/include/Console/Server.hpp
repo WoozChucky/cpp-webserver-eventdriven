@@ -11,7 +11,7 @@
 #include <Console/Channels/IChannel.hpp>
 #include <Console/Common/MemoryPool.hpp>
 
-typedef std::function<void(Context* ctx, Message message)> OnMessageDelegate;
+typedef std::function<void(Context* ctx, std::string& message)> OnMessageDelegate;
 typedef std::function<void(Context* ctx)> OnClientDelegate;
 
 class Server {
@@ -39,7 +39,6 @@ private:
     EventManager* manager;
     IChannel* channel;
     MemoryPool* connectionsMemPool;
-    MemoryPool* readBufferMemPool;
     bool running;
 
     ServerConfiguration* _configuration;
@@ -50,7 +49,7 @@ private:
     void HandleConnections();
 
     void HandleNewConnectionEvent();
-    void HandleMessageEvent(Context *handle, char** buffer, int bufferSize);
+    void HandleMessageEvent(Context *handle);
 
     OnMessageDelegate messageDelegate;
     OnClientDelegate clientConnectedDelegate;

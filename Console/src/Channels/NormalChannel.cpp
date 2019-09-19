@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-void NormalChannel::AcceptConnection(SocketHandle handle, bool, Context* outContext) {
+void NormalChannel::AcceptConnection(SocketHandle handle, Context* outContext) {
 
     // accept the client
     auto socket = accept(handle, nullptr, nullptr);
@@ -30,10 +30,10 @@ void NormalChannel::DisposeConnection(Context* ctx) {
 
 }
 
-size_t NormalChannel::Read(Context* ctx, char **data, size_t dataLength) {
+std::string NormalChannel::Read(Context* ctx) {
 
     //TODO: Fix ME
-    return recv(ctx->socket.handle, data, dataLength, 0);
+    return reinterpret_cast<const char *>(recv(ctx->socket.handle, (void *) "", 0, 0));
 
 }
 

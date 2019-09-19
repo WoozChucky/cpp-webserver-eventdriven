@@ -10,6 +10,7 @@
 #include <Console/Http/HttpResponse.hpp>
 #include <map>
 #include <Console/Http/HttpRouter.hpp>
+#include <Console/Http/HttpParser.hpp>
 
 
 class HttpServer  {
@@ -27,6 +28,7 @@ private:
     Server* server;
     EventManager * eventManager;
     HttpRouter*  router;
+    HttpParser* parser;
 };
 
 #endif //HTTPSERVER_HPP
