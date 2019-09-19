@@ -51,6 +51,7 @@ void HttpServer::Boot() {
 
     this->server->OnMessage([this](Context* ctx, const std::string& messageBuffer) -> void {
 
+#if DEBUG_ENABLED
         if (ctx->socket.handle > 0) {
             fprintf(stdout, "\t[%d][%s:%d] - PACKET\n--- PACKET START\n%s\n--- PACKET END\n",
                     ctx->socket.handle,
@@ -58,10 +59,7 @@ void HttpServer::Boot() {
                     ctx->socket.port,
                     messageBuffer.c_str());
         }
-
-        // TODO(Levezinho):
-        // Parse the context buffer to a "real" http request (check RFC)
-        // either add try-catch to router->GetHandler, or make it return a ptr/nullptr anc check that instead.
+#endif
 
         auto request = this->parser->RequestFromBuffer(messageBuffer);
 
