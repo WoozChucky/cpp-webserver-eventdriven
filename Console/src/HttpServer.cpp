@@ -104,8 +104,6 @@ void HttpServer::Boot() {
     this->server->Boot();
 }
 
-#define LOOP(times) for(auto i = 0; i < times; i++)
-
 void HttpServer::Handle(const std::string& path, const HttpHandler& handler) {
     this->router->AddRoute(path, handler);
 }

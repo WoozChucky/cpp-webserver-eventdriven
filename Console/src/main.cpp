@@ -26,7 +26,6 @@ The non-blocking tcp server can be implemented as follows:
  */
 
 #include <Console/HttpServer.hpp>
-#include <zconf.h>
 #include <thread>
 
 int main() {
@@ -38,8 +37,6 @@ int main() {
         // do stuff
         fprintf(stdout, "%s\n", request->GetHeader("Content-Length").GetValue().c_str());
         fprintf(stdout, "%s\n", request->GetBody().c_str());
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     });
 
     http->Handle("/register",

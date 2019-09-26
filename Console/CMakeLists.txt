@@ -11,7 +11,7 @@ set(Headers
 
 set(Sources
         src/main.cpp
-        include/Console/SocketOptionBuilder.hpp include/Console/Server.hpp src/Server.cpp include/Console/EventManager.hpp src/EventManager.cpp include/Console/NetUtils.hpp src/NetUtils.cpp include/Console/Channels/IChannel.hpp include/Console/Channels/SecureChannel.hpp include/Console/Channels/NormalChannel.hpp src/Channels/SecureChannel.cpp src/Channels/NormalChannel.cpp include/Console/Common/MemoryPool.hpp src/Common/MemoryPool.cpp include/Console/HttpServer.hpp src/HttpServer.cpp include/Console/Common/File.hpp src/Common/File.cpp include/Console/Http/HttpRequest.hpp include/Console/Http/HttpResponse.hpp include/Console/Http/HttpStatusCode.hpp include/Console/Http/HttpMethod.hpp include/Console/Http/HttpRouter.hpp src/Http/HttpRouter.cpp include/Console/Http/HttpParser.hpp src/Http/HttpParser.cpp include/Console/Http/HttpHeader.hpp include/Console/Http/HttpProtocol.hpp src/Http/HttpRequest.cpp src/Http/HttpHeader.cpp include/Console/Http/HttpContext.hpp)
+        include/Console/SocketOptionBuilder.hpp include/Console/Server.hpp src/Server.cpp include/Console/EventManager.hpp src/EventManager.cpp include/Console/NetUtils.hpp src/NetUtils.cpp include/Console/Channels/IChannel.hpp include/Console/Channels/SecureChannel.hpp include/Console/Channels/NormalChannel.hpp src/Channels/SecureChannel.cpp src/Channels/NormalChannel.cpp include/Console/Common/MemoryPool.hpp src/Common/MemoryPool.cpp include/Console/HttpServer.hpp src/HttpServer.cpp include/Console/Common/File.hpp src/Common/File.cpp include/Console/Http/HttpRequest.hpp include/Console/Http/HttpResponse.hpp include/Console/Http/HttpStatusCode.hpp include/Console/Http/HttpMethod.hpp include/Console/Http/HttpRouter.hpp src/Http/HttpRouter.cpp include/Console/Http/HttpParser.hpp src/Http/HttpParser.cpp include/Console/Http/HttpHeader.hpp include/Console/Http/HttpProtocol.hpp src/Http/HttpRequest.cpp src/Http/HttpHeader.cpp include/Console/Http/HttpContext.hpp include/Console/Loader/DynamicLibrary.hpp src/Loader/DynamicLibrary.cpp src/Loader/DynamicLibraryImpl.hpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -21,9 +21,7 @@ include_directories(../Core/include)
 include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
 include_directories(${LIBRESSL_INCLUDE_DIR})
 
-find_library(LIB_CORE LChainCore PATHS ../bin/lib)
-set(SSL_LIBRA /usr/local/Cellar/openssl@1.1/1.1.1c/lib/libssl.dylib)
-set(CRYPTO_LIBRA /usr/local/Cellar/openssl@1.1/1.1.1c/lib/libcrypto.dylib)
+# find_library(LIB_CORE LChainCore PATHS ../${CMAKE_BUILD_TYPE}/lib)
 
 if(MSVC)
     add_definitions(
@@ -37,7 +35,8 @@ if(${Debug} STREQUAL 1)
     add_definitions(-DDEBUG_ENABLED)
 endif()
 
-add_executable(${This} ${Sources} ${Headers})
+#add_executable(${This} ${Sources} ${Headers})
+add_library(${This} SHARED ${Sources} ${Headers})
 
 find_package(LibreSSL REQUIRED)
 
@@ -56,9 +55,8 @@ if(UNIX)
 endif(UNIX)
 
 message(STATUS "${LIBRESSL_INCLUDE_DIR}")
-message(STATUS "${SSL_LIBRA}")
-message(STATUS "${CRYPTO_LIBRA}")
 
-target_link_libraries(${This} ${LIB_CORE} ${SSL_LIBRA} ${CRYPTO_LIBRA} LibreSSL::TLS)
+# ${LIB_CORE}
+target_link_libraries(${This} LibreSSL::TLS)
 
 # add_subdirectory(test)
