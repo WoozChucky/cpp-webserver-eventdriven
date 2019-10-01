@@ -1,8 +1,8 @@
 //
-// Created by Nuno Levezinho Silva on 17/09/2019.
+// Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include <Console/Http/HttpRouter.hpp>
+#include <Http/HttpRouter.hpp>
 #include <utility>
 
 void HttpRouter::AddRoute(const std::string& path, const HttpHandler& handler) {
@@ -32,7 +32,7 @@ void HttpRouter::AddRoute(const std::string& path, HttpMethod method, HttpHandle
 HttpHandler HttpRouter::GetHandler(const std::string& path, HttpMethod method) {
 
     auto handler = this->_routes[path][method];
-    
+
     return handler;
 }
 
@@ -43,4 +43,3 @@ HttpHandler HttpRouter::GetHandler(const std::string& path) {
 
     return handler;
 }
-

@@ -25,10 +25,15 @@ The non-blocking tcp server can be implemented as follows:
 15. For close events, remove the file descriptor from the epoll instance
  */
 
-#include <Console/HttpServer.hpp>
-#include <thread>
+#include <Http/HttpServer.hpp>
 
-int main() {
+#define TRACE(fmt, ...) \
+    fprintf(stderr, "[DBG - %s] %s::%d::%s: " fmt, __TIME__, __FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__);
+
+
+int main(int argc, char **argv) {
+
+    TRACE("%s - %d", "a", 5)
 
     auto http = new HttpServer();
 

@@ -1,26 +1,33 @@
-# CMakeLists.txt for APIVivaServer
+# CMakeLists.txt for SocketServer
 #
 # © 2019 by Nuno Silva
 
 cmake_minimum_required(VERSION 3.8)
-set(This Console)
+set(This SocketServer)
 
 set(Headers
-        # include/Console/exports.h
-        )
+        include/Socket/Sugar.hpp
+        include/Socket/Channels/IChannel.hpp
+        include/Socket/Events/EventManager.hpp
+        include/Socket/SocketOptionsBuilder.hpp
+        include/Socket/Server.hpp)
 
 set(Sources
-        src/main.cpp)
+        src/NetUtils.hpp
+        src/NetUtils.cpp
+        src/Channels/SecureChannel.hpp
+        src/Channels/NormalChannel.cpp
+        src/Channels/SecureChannel.cpp
+        src/Channels/NormalChannel.hpp
+        src/Events/EventManager.cpp src/Server.cpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(../Core/include)
 include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
 include_directories(${LIBRESSL_INCLUDE_DIR})
-
-# find_library(LIB_CORE LChainCore PATHS ../${CMAKE_BUILD_TYPE}/lib)
+# include_directories(../Abstractions/include)
 
 if(MSVC)
     add_definitions(
@@ -34,14 +41,14 @@ if(${Debug} STREQUAL 1)
     add_definitions(-DDEBUG_ENABLED)
 endif()
 
-add_executable(${This} ${Sources} ${Headers})
+add_library(${This} SHARED ${Sources} ${Headers})
 
 find_package(LibreSSL REQUIRED)
 
 target_include_directories(${This} PUBLIC include)
 
 set_target_properties(${This} PROPERTIES
-        FOLDER Applications
+        FOLDER Libraries
         )
 
 if(UNIX)
@@ -52,9 +59,6 @@ if(UNIX)
             )
 endif(UNIX)
 
-message(STATUS "${LIBRESSL_INCLUDE_DIR}")
-
-# ${LIB_CORE}
-target_link_libraries(${This} Abstractions SocketServer HttpServer LibreSSL::TLS)
+target_link_libraries(${This} LibreSSL::TLS Abstractions)
 
 # add_subdirectory(test)

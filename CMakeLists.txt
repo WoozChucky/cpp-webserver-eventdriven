@@ -78,8 +78,10 @@ if(ParentDirectory STREQUAL "")
             )
 
     # All other libraries can be pulled in without further configuration.
-    add_subdirectory(Core)
     add_subdirectory(Console)
+    add_subdirectory(Abstractions)
+    add_subdirectory(SocketServer)
+    add_subdirectory(HttpServer)
 
 endif(ParentDirectory STREQUAL "")
 

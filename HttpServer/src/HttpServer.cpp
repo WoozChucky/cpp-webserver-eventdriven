@@ -1,11 +1,12 @@
 //
-// Created by Nuno Levezinho Silva on 16/09/2019.
+// Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include <Console/HttpServer.hpp>
-#include <Console/Http/HttpParser.hpp>
+#include <Http/HttpServer.hpp>
+#include <Http/HttpParser.hpp>
 #include <utility>
 #include <chrono>
+#include <Socket/SocketOptionsBuilder.hpp>
 
 HttpServer::HttpServer() {
     this->server = nullptr;

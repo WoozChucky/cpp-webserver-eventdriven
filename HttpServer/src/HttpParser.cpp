@@ -1,8 +1,8 @@
 //
-// Created by Nuno Levezinho Silva on 18/09/2019.
+// Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include <Console/Http/HttpParser.hpp>
+#include <Http/HttpParser.hpp>
 #include <deque>
 
 HttpParser::HttpParser(HttpProtocol protocol) {
@@ -76,40 +76,6 @@ HttpRequest HttpParser::RequestFromBuffer(const std::string& buffer) {
         headers.push_back(HttpHeader(key, value));
         headerCount++;
     }
-
-    /*
-    for(auto& line : lines) {
-
-        if (hasBody) {
-
-            if (line == "\r\n") {
-                // Reached end of header's parsing
-                auto key = get_left_of_delim(line, ":");
-                auto value = get_right_of_delim(line, ":");
-                headers.push_back(HttpHeader(key, value));
-                headerCount++;
-                break;
-            } else {
-                // Parse normal header
-                auto key = get_left_of_delim(line, ":");
-                auto value = get_right_of_delim(line, ":");
-
-                headers.push_back(HttpHeader(key, value));
-                headerCount++;
-            }
-
-        } else {
-
-            // Parse normal header
-            auto key = get_left_of_delim(line, ":");
-            auto value = get_right_of_delim(line, ":");
-
-            headers.push_back(HttpHeader(key, value));
-            headerCount++;
-
-        }
-    }
-     */
 
     for(auto i = 0; i < headerCount; i++)
         lines.pop_front();

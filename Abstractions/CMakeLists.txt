@@ -1,26 +1,22 @@
-# CMakeLists.txt for APIVivaServer
+# CMakeLists.txt for Abstractions
 #
 # © 2019 by Nuno Silva
 
 cmake_minimum_required(VERSION 3.8)
-set(This Console)
+set(This Abstractions)
 
 set(Headers
-        # include/Console/exports.h
-        )
+        include/Abstractions/MemoryPool.hpp
+        include/Abstractions/File.hpp
+        include/Abstractions/Logger.hpp include/Abstractions/DynamicLibrary.hpp)
 
 set(Sources
-        src/main.cpp)
+        src/MemoryPool.cpp
+        src/File.cpp src/DynamicLibrary.cpp src/DynamicLibraryImpl.hpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-include_directories(../Core/include)
-include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
-include_directories(${LIBRESSL_INCLUDE_DIR})
-
-# find_library(LIB_CORE LChainCore PATHS ../${CMAKE_BUILD_TYPE}/lib)
 
 if(MSVC)
     add_definitions(
@@ -34,27 +30,21 @@ if(${Debug} STREQUAL 1)
     add_definitions(-DDEBUG_ENABLED)
 endif()
 
-add_executable(${This} ${Sources} ${Headers})
-
-find_package(LibreSSL REQUIRED)
+add_library(${This} SHARED ${Sources} ${Headers})
 
 target_include_directories(${This} PUBLIC include)
 
 set_target_properties(${This} PROPERTIES
-        FOLDER Applications
+        FOLDER Libraries
         )
 
 if(UNIX)
     target_link_libraries(${This}
             pthread
             dl
-            ${OPENSSL_LIBRARIES}
             )
 endif(UNIX)
 
-message(STATUS "${LIBRESSL_INCLUDE_DIR}")
-
-# ${LIB_CORE}
-target_link_libraries(${This} Abstractions SocketServer HttpServer LibreSSL::TLS)
+target_link_libraries(${This})
 
 # add_subdirectory(test)
