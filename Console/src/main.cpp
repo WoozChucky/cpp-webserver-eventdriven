@@ -26,16 +26,26 @@ The non-blocking tcp server can be implemented as follows:
  */
 
 #include <Http/HttpServer.hpp>
-
-#define TRACE(fmt, ...) \
-    fprintf(stderr, "[DBG - %s] %s::%d::%s: " fmt, __TIME__, __FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__);
-
+#include <Abstractions/Logger.hpp>
+#include <Socket/SocketOptionsBuilder.hpp>
 
 int main(int argc, char **argv) {
 
-    TRACE("%s - %d", "a", 5)
+    TRACE("%s - %d", "a", 5);
 
-    auto http = new HttpServer();
+    auto builder = new SocketOptionBuilder();
+    auto options = builder
+            ->WithReuseAddress()
+            ->WithReusePort()
+            ->WithKeepAlive()
+            ->WithMaxQueuedConnection(100)
+            ->WithServerPort(443)
+            ->WithSSL(true)
+            ->WithCertificate("cert.pem")
+            ->WithPrivateKey("key.pem")
+            ->Build();
+
+    auto http = new HttpServer(options);
 
     http->Handle("/",
             [](HttpRequest* request, HttpResponse* response) -> void {

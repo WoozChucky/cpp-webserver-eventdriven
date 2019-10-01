@@ -17,6 +17,7 @@ class HttpServer  {
 public:
 
     HttpServer();
+    explicit HttpServer(ServerConfiguration* configuration);
 
     void Boot();
 
@@ -24,10 +25,16 @@ public:
     void Handle(const std::string& path, HttpMethod method, HttpHandler handler);
 
 private:
-    Server* server;
-    EventManager * eventManager;
-    HttpRouter*  router;
-    HttpParser* parser;
+    Server* _server;
+    EventManager * _eventManager;
+    HttpRouter*  _router;
+    HttpParser* _parser;
+    ServerConfiguration* _configuration;
+
+    HttpRouter* GetRouter();
+    HttpParser* GetParser();
+    EventManager* GetEventManager();
+    Server* GetTransport();
 };
 
 #endif //HTTPSERVER_HPP

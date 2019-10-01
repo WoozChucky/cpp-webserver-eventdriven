@@ -9,47 +9,60 @@
 #include <Socket/SocketOptionsBuilder.hpp>
 
 HttpServer::HttpServer() {
-    this->server = nullptr;
-    this->eventManager = nullptr;
-    this->router = new HttpRouter();
-    this->parser = new HttpParser(HttpProtocol::V1_1);
+    this->_server = nullptr;
+    this->_eventManager = nullptr;
+    this->_router = new HttpRouter();
+    this->_parser = new HttpParser(HttpProtocol::V1_1);
+    this->_configuration = nullptr;
+}
+
+HttpServer::HttpServer(ServerConfiguration *configuration) {
+    this->_server = nullptr;
+    this->_eventManager = nullptr;
+    this->_router = new HttpRouter();
+    this->_parser = new HttpParser(HttpProtocol::V1_1);
+    this->_configuration = configuration;
 }
 
 void HttpServer::Boot() {
 
-    auto builder = new SocketOptionBuilder();
-    auto options = builder
-            ->WithReuseAddress()
-            ->WithReusePort()
-            ->WithKeepAlive()
-            ->WithMaxQueuedConnection(100)
-            ->WithServerPort(443)
-            ->WithSSL(true)
-            ->WithCertificate("cert.pem")
-            ->WithPrivateKey("key.pem")
-            ->Build();
+    if (this->_configuration == nullptr) {
 
-    this->eventManager = new EventManager();
-    this->server = new Server(options);
+        // default socket server settings
+        auto builder = new SocketOptionBuilder();
+        this->_configuration = builder
+                ->WithReuseAddress()
+                ->WithReusePort()
+                ->WithKeepAlive()
+                ->WithMaxQueuedConnection(100)
+                ->WithServerPort(443)
+                ->WithSSL(true)
+                ->WithCertificate("cert.pem")
+                ->WithPrivateKey("key.pem")
+                ->Build();
+    }
 
-    this->server->SetEventManager(this->eventManager);
-    this->server->Setup();
+    this->_eventManager = new EventManager();
+    this->_server = new Server(this->_configuration);
 
-    this->server->OnClientConnected([](SocketContext* ctx) -> void {
+    this->GetTransport()->SetEventManager(this->_eventManager);
+    this->GetTransport()->Setup();
+
+    this->GetTransport()->OnClientConnected([](SocketContext* ctx) -> void {
         fprintf(stdout, "\t[%d][%s:%d] - CONNECTION\n",
                 ctx->Socket.Handle,
                 ctx->Socket.Address.c_str(),
                 ctx->Socket.Port);
     });
 
-    this->server->OnClientDisconnected([](SocketContext* ctx) -> void {
+    this->GetTransport()->OnClientDisconnected([](SocketContext* ctx) -> void {
         fprintf(stdout, "\t[%d][%s:%d] - DISCONNECTION\n",
                 ctx->Socket.Handle,
                 ctx->Socket.Address.c_str(),
                 ctx->Socket.Port);
     });
 
-    this->server->OnMessage([this](SocketContext* ctx, const std::string& messageBuffer) -> void {
+    this->GetTransport()->OnMessage([this](SocketContext* ctx, const std::string& messageBuffer) -> void {
 
 #if DEBUG_ENABLED
         if (ctx->Socket.Handle > 0) {
@@ -61,11 +74,11 @@ void HttpServer::Boot() {
         }
 #endif
 
-        auto request = this->parser->RequestFromBuffer(messageBuffer);
+        auto request = this->GetParser()->RequestFromBuffer(messageBuffer);
 
         HttpResponse response{};
 
-        auto handler = this->router->GetHandler(request.GetPath(), request.GetMethod());
+        auto handler = this->GetRouter()->GetHandler(request.GetPath(), request.GetMethod());
 
         std::string responseString;
 
@@ -95,20 +108,36 @@ void HttpServer::Boot() {
                                "\r\n";
         }
 
-        this->server->GetChannel()->Write(ctx, (void *) responseString.c_str(), responseString.size());
+        this->GetTransport()->GetChannel()->Write(ctx, (void *) responseString.c_str(), responseString.size());
 
         if (request.GetHeader("Connection").GetValue() == "close")
-            this->server->HandleDisconnectionEvent(ctx);
+            this->GetTransport()->HandleDisconnectionEvent(ctx);
 
     });
 
-    this->server->Boot();
+    this->_server->Boot();
 }
 
 void HttpServer::Handle(const std::string& path, const HttpHandler& handler) {
-    this->router->AddRoute(path, handler);
+    this->_router->AddRoute(path, handler);
 }
 
 void HttpServer::Handle(const std::string& path, HttpMethod method, HttpHandler handler) {
-    this->router->AddRoute(path, method, std::move(handler));
+    this->_router->AddRoute(path, method, std::move(handler));
+}
+
+HttpRouter *HttpServer::GetRouter() {
+    return this->_router;
+}
+
+HttpParser *HttpServer::GetParser() {
+    return this->_parser;
+}
+
+EventManager *HttpServer::GetEventManager() {
+    return this->_eventManager;
+}
+
+Server *HttpServer::GetTransport() {
+    return this->_server;
 }
