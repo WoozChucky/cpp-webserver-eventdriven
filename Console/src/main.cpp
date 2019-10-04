@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
             ->WithPrivateKey("key.pem")
             ->Build();
 
-    auto http = new HttpServer(options);
+    auto http = new HttpServer();
 
     http->Handle("/",
             [](HttpRequest* request, HttpResponse* response) -> void {

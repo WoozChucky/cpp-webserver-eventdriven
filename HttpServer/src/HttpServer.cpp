@@ -45,7 +45,7 @@ void HttpServer::Boot() {
     this->_eventManager = new EventManager();
     this->_server = new Server(this->_configuration);
 
-    this->GetTransport()->SetEventManager(this->_eventManager);
+    this->GetTransport()->SetEventManager(this->GetEventManager());
     this->GetTransport()->Setup();
 
     this->GetTransport()->OnClientConnected([](SocketContext* ctx) -> void {

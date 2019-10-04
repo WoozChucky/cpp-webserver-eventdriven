@@ -1,4 +1,4 @@
-# CMakeLists.txt for APIVivaServer
+# CMakeLists.txt for Console
 #
 # © 2019 by Nuno Silva
 
@@ -15,12 +15,6 @@ set(Sources
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-include_directories(../Core/include)
-include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
-include_directories(${LIBRESSL_INCLUDE_DIR})
-
-# find_library(LIB_CORE LChainCore PATHS ../${CMAKE_BUILD_TYPE}/lib)
 
 if(MSVC)
     add_definitions(
@@ -52,9 +46,6 @@ if(UNIX)
             )
 endif(UNIX)
 
-message(STATUS "${LIBRESSL_INCLUDE_DIR}")
-
-# ${LIB_CORE}
 target_link_libraries(${This} Abstractions SocketServer HttpServer LibreSSL::TLS)
 
 # add_subdirectory(test)
