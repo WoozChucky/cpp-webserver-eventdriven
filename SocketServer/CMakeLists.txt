@@ -19,7 +19,7 @@ set(Sources
         src/Channels/NormalChannel.cpp
         src/Channels/SecureChannel.cpp
         src/Channels/NormalChannel.hpp
-        src/Events/EventManager.cpp src/Server.cpp)
+        src/Server.cpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -27,7 +27,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
 include_directories(${LIBRESSL_INCLUDE_DIR})
-# include_directories(../Abstractions/include)
+
+if(APPLE)
+    add_definitions(-DMACOS)
+    list(APPEND Sources
+            src/Events/EventManager.cpp)
+elseif(UNIX)
+    add_definitions(-DLINUX)
+    list(APPEND Sources
+            src/Events/LinuxEventManager.cpp)
+elseif(MSVC)
+    add_definitions(-DWINDOWS)
+endif()
 
 if(MSVC)
     add_definitions(
@@ -37,7 +48,7 @@ if(MSVC)
     )
 endif()
 
-if(${Debug} STREQUAL 1)
+if(1)
     add_definitions(-DDEBUG_ENABLED)
 endif()
 

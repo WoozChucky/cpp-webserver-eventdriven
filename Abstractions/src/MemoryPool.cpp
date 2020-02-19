@@ -3,6 +3,7 @@
 //
 
 #include <Abstractions/MemoryPool.hpp>
+#include <cassert>
 
 MemoryPool::MemoryPool(std::size_t l_block_size, int l_pre_alloc, int l_max_alloc):
         _block_size(l_block_size),

@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <sys/param.h>
 #include <vector>
+#include <cstdarg>
+#include <cassert>
 
 #include "DynamicLibraryImpl.hpp"
 
@@ -29,7 +31,7 @@ std::string vsprintf(const char* format, va_list args) {
     return std::string(buffer.begin(), buffer.begin() + required);
 }
 
-std::string sprintf(const char* format, ...) {
+std::string internal_sprintf(const char* format, ...) {
     va_list args;
     va_start(args, format);
     return vsprintf(format, args);
@@ -68,7 +70,7 @@ bool DynamicLibrary::Load(const std::string &path, const std::string &name) {
     std::vector<char> originalPath(MAXPATHLEN);
     (void)getcwd(&originalPath[0], originalPath.size());
     (void)chdir(path.c_str());
-    const auto library = sprintf(
+    const auto library = internal_sprintf(
             "%s/lib%s.%s",
             path.c_str(),
             name.c_str(),

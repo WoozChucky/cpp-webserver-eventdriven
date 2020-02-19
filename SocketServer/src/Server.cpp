@@ -6,8 +6,18 @@
 
 #include <fcntl.h>
 #include <netinet/in.h>
-#include <sys/event.h>
 #include <unistd.h>
+
+#if MACOS
+#include <sys/event.h>
+#endif
+#if LINUX
+#include <sys/epoll.h>
+#include <cassert>
+#include <cstring>
+
+#endif
+
 #include "Channels/SecureChannel.hpp"
 #include "Channels/NormalChannel.hpp"
 
@@ -128,6 +138,47 @@ void Server::HandleConnections() {
 
             auto event = evtList[i];
 
+          /**
+           * Windows
+           */
+
+           /**
+            * Linux
+            */
+           if (event.data.fd == this->GetHandle()) {
+
+               this->HandleNewConnectionEvent();
+
+           } else {
+
+               if ((event.events & EPOLLHUP) || (event.events & EPOLLERR)) {
+
+                   auto ctx = reinterpret_cast<SocketContext *>(event.data.ptr);
+
+                   this->HandleDisconnectionEvent(ctx);
+               }
+
+               if (event.events & EPOLLIN) { // Read Event
+
+                   auto ctx = reinterpret_cast<SocketContext *>(event.data.ptr);
+
+                   try {
+                       this->HandleMessageEvent(ctx);
+                   } catch (...) {
+                       fprintf(stderr, "Error HandleMessageEvent\n");
+                   }
+               }
+
+               if (event.events & EPOLLOUT) { // Write Event
+
+               }
+
+           }
+
+
+           /**
+            * MacOS
+            */
             if (event.flags & (unsigned)EV_EOF) { // disconnection event
 
                 auto ctx = reinterpret_cast<SocketContext *>(event.udata);

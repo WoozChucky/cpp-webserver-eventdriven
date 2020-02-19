@@ -6,6 +6,7 @@
 #define DYNAMICLIBRARY_HPP
 
 #include <string>
+#include <memory>
 
 class DynamicLibrary {
 

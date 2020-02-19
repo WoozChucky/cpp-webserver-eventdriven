@@ -33,7 +33,7 @@ if(MSVC)
     )
 endif()
 
-if(${Debug} STREQUAL 1)
+if(1)
     add_definitions(-DDEBUG_ENABLED)
 endif()
 

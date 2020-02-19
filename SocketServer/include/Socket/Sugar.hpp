@@ -26,13 +26,21 @@ using Memory = void*;
 
 using SocketHandle      = S32;
 using EventHandle       = S32;
-using Event             = struct kevent;
 using SocketAddress     = struct sockaddr;
 using SocketAddressIn   = struct sockaddr_in;
 using SocketAddressIn6  = struct sockaddr_in6;
 using SocketStorage     = struct sockaddr_storage;
 using TLS               = struct tls;
 using TLSConfig         = struct tls_config;
+
+#if LINUX
+using Event             = struct epoll_event;
+#endif
+#if MACOS
+using Event             = struct kevent;
+#endif
+#if WINDOWS
+#endif
 
 enum IPType {
     Unsupported = 0x00,

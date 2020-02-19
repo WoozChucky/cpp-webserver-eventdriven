@@ -10,6 +10,7 @@
 #include <Socket/Channels/IChannel.hpp>
 #include <Socket/Events/EventManager.hpp>
 #include <netinet/in.h>
+#include <functional>
 
 using OnMessageDelegate = std::function<void(SocketContext* ctx, std::string& message)>;
 using OnClientDelegate =  std::function<void(SocketContext* ctx)>;
