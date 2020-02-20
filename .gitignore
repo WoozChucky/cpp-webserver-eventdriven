@@ -6,3 +6,13 @@ bin/
 debug/
 
 release/
+
+*.log
+
+CMakeFiles/
+
+lib/
+
+cmake-build-debug/
+
+build/

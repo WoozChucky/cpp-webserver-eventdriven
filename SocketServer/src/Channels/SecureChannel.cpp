@@ -10,6 +10,7 @@
 #include <Abstractions/File.hpp>
 #include <Abstractions/Logger.hpp>
 #include "../NetUtils.hpp"
+#include <cstring>
 
 void SecureChannel::prepare() {
 
