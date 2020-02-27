@@ -40,7 +40,21 @@ using Event             = struct epoll_event;
 using Event             = struct kevent;
 #endif
 #if WINDOWS
+
 #endif
+
+enum EventType {
+    Read        = (-1),
+    Write       = (-2),
+    Disconnect  = (-3)
+};
+
+enum EventAction {
+    Add = 0x0001,
+    Delete = 0x0002,
+    Enable = 0x0004,
+    Disable = 0x0008
+};
 
 enum IPType {
     Unsupported = 0x00,
@@ -137,18 +151,23 @@ typedef struct SocketContext {
     /**
      * @brief The socket object
      */
-    Socket Socket {0, 0, nullptr, IPType::Unsupported, BlockingMode::Unknown };
+    struct Socket Socket {0, 0, nullptr, IPType::Unsupported, BlockingMode::Unknown };
 
     /**
      * @brief The tls context
      */
-    TLS* TLS{nullptr};
+     struct tls* TLS{nullptr};
 
-    /**
+    /**-
      * @brief Flag indicating is this context is secure
      */
     bool Secure = false;
 
 } SocketContext;
+
+typedef struct HandledEvent {
+    SocketContext* Context;
+    EventType Type;
+} HandledEvent;
 
 #endif //SUGAR_HPP

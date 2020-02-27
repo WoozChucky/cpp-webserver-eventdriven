@@ -8,9 +8,10 @@
 #include <Socket/Sugar.hpp>
 #include <Abstractions/MemoryPool.hpp>
 #include <Socket/Channels/IChannel.hpp>
-#include <Socket/Events/EventManager.hpp>
+#include <Socket/Events/MacEventManager.hpp>
 #include <netinet/in.h>
 #include <functional>
+#include <Socket/Events/EventHandler.hpp>
 
 using OnMessageDelegate = std::function<void(SocketContext* ctx, std::string& message)>;
 using OnClientDelegate =  std::function<void(SocketContext* ctx)>;
@@ -38,13 +39,14 @@ private:
     SocketAddressIn serverAddress;
     SocketHandle serverSocket;
     EventManager* manager;
+    EventHandler* handler;
     IChannel* channel;
     MemoryPool* connectionsMemPool;
     bool running;
 
     ServerConfiguration* _configuration;
 
-    int GetHandle();
+    SocketHandle GetHandle();
     bool SetSocketOption(int option);
     bool GetSocketOption(int option);
     void HandleConnections();

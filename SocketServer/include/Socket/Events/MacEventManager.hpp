@@ -7,18 +7,6 @@
 
 #include <Socket/Sugar.hpp>
 
-enum EventType {
-    Read =  (-1),
-    Write = (-2)
-};
-
-enum EventAction {
-    Add = 0x0001,
-    Delete = 0x0002,
-    Enable = 0x0004,
-    Disable = 0x0008
-};
-
 class EventManager {
 
 public:

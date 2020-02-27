@@ -69,6 +69,14 @@ if(ParentDirectory STREQUAL "")
     # Add modules path dir
     set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
 
+    if(APPLE)
+        add_definitions(-DMACOS)
+    elseif(UNIX)
+        add_definitions(-DLINUX)
+    elseif(MSVC)
+        add_definitions(-DWINDOWS)
+    endif()
+
     # Google Test
     set(BUILD_GTEST ON CACHE BOOL "Builds the googletest subproject" FORCE)
     set(BUILD_GMOCK ON CACHE BOOL "Builds the googlemock subproject" FORCE)

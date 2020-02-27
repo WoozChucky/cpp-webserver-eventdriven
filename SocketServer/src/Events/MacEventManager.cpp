@@ -2,7 +2,7 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include <Socket/Events/EventManager.hpp>
+#include <Socket/Events/MacEventManager.hpp>
 
 #include <cstdio>
 #include <sys/event.h>

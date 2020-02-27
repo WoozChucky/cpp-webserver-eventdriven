@@ -115,6 +115,8 @@ void HttpServer::Boot() {
 
     });
 
+    fprintf(stderr, "%s", "Created HttpServer");
+
     this->_server->Boot();
 }
 

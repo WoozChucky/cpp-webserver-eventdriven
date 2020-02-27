@@ -10,6 +10,7 @@
 #include <Http/Sugar.hpp>
 #include <map>
 #include <string>
+#include <functional>
 
 using HttpHandler = std::function<void(HttpRequest* request, HttpResponse* response)> ;
 

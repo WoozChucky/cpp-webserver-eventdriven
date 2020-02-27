@@ -8,7 +8,8 @@ set(This SocketServer)
 set(Headers
         include/Socket/Sugar.hpp
         include/Socket/Channels/IChannel.hpp
-        include/Socket/Events/EventManager.hpp
+        include/Socket/Events/MacEventManager.hpp
+        include/Socket/Events/EventHandler.hpp
         include/Socket/SocketOptionsBuilder.hpp
         include/Socket/Server.hpp)
 
@@ -29,15 +30,14 @@ include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
 include_directories(${LIBRESSL_INCLUDE_DIR})
 
 if(APPLE)
-    add_definitions(-DMACOS)
     list(APPEND Sources
-            src/Events/EventManager.cpp)
+            src/Events/MacEventManager.cpp)
 elseif(UNIX)
-    add_definitions(-DLINUX)
     list(APPEND Sources
-            src/Events/LinuxEventManager.cpp)
+            src/Events/LinuxEventManager.cpp
+            src/Events/LinuxEventHandler.cpp)
 elseif(MSVC)
-    add_definitions(-DWINDOWS)
+
 endif()
 
 if(MSVC)

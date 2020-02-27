@@ -2,7 +2,7 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include <Socket/Events/EventManager.hpp>
+#include <Socket/Events/MacEventManager.hpp>
 
 #include <cstdio>
 #include <sys/epoll.h>
@@ -13,7 +13,7 @@ EventManager::EventManager() {
 
 void EventManager::RegisterEvent(SocketContext* ctx, EventType, EventAction action, bool saveContext) {
 
-    Event evSet;
+    epoll_event evSet{};
 
     if (saveContext)
         evSet.data.ptr = ctx;
@@ -24,7 +24,7 @@ void EventManager::RegisterEvent(SocketContext* ctx, EventType, EventAction acti
 
 void EventManager::RegisterEvent(SocketHandle socket, EventType, EventAction action) {
 
-    Event evSet;
+    epoll_event evSet{};
 
     if (epoll_ctl(this->GetHandle(), action, socket, &evSet) == -1)
         fprintf(stdout, "Failed to register event\n");

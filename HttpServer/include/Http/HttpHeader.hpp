@@ -6,6 +6,7 @@
 #define HTTPHEADER_HPP
 
 #include <string>
+#include <vector>
 
 class HttpHeader {
 

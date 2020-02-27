@@ -11,10 +11,12 @@
 #if MACOS
 #include <sys/event.h>
 #endif
+
 #if LINUX
 #include <sys/epoll.h>
 #include <cassert>
 #include <cstring>
+#include <Socket/Events/EventHandler.hpp>
 
 #endif
 
@@ -22,13 +24,13 @@
 #include "Channels/NormalChannel.hpp"
 
 Server::Server()
-        : serverSocket(0), serverAddress{}, manager{nullptr}, channel{nullptr},
+        : serverSocket(0), serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
           connectionsMemPool{new MemoryPool(sizeof(SocketContext), 3, 100)},
           _configuration{nullptr}, running{false}
 { }
 
 Server::Server(ServerConfiguration* configuration)
-        : serverSocket{0}, serverAddress{}, manager{nullptr}, channel{nullptr},
+        : serverSocket{0}, serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
           connectionsMemPool{new MemoryPool(sizeof(SocketContext), 3, 100)},
           running{false}, _configuration{configuration}{
     assert(configuration != nullptr);
@@ -62,6 +64,7 @@ void Server::Setup() {
         this->channel = new NormalChannel();
     }
 
+    this->handler = new EventHandler(this->GetHandle());
 }
 
 void Server::Boot() {
@@ -80,6 +83,7 @@ void Server::Boot() {
     }
 
     this->manager->RegisterEvent(this->GetHandle(), EventType::Read, EventAction::Add);
+
 
     this->running = true;
 
@@ -115,7 +119,7 @@ bool Server::GetSocketOption(int option) {
     return optval;
 }
 
-int Server::GetHandle() {
+SocketHandle Server::GetHandle() {
     return this->serverSocket;
 }
 
@@ -136,68 +140,37 @@ void Server::HandleConnections() {
         // iterate through all of the events received
         for (auto i = 0; i < nEvents; ++i) {
 
-            auto event = evtList[i];
+            auto result = this->handler->DigestEvent(evtList[i]);
 
-          /**
-           * Windows
-           */
-
-           /**
-            * Linux
-            */
-           if (event.data.fd == this->GetHandle()) {
-
-               this->HandleNewConnectionEvent();
-
-           } else {
-
-               if ((event.events & EPOLLHUP) || (event.events & EPOLLERR)) {
-
-                   auto ctx = reinterpret_cast<SocketContext *>(event.data.ptr);
-
-                   this->HandleDisconnectionEvent(ctx);
-               }
-
-               if (event.events & EPOLLIN) { // Read Event
-
-                   auto ctx = reinterpret_cast<SocketContext *>(event.data.ptr);
-
-                   try {
-                       this->HandleMessageEvent(ctx);
-                   } catch (...) {
-                       fprintf(stderr, "Error HandleMessageEvent\n");
-                   }
-               }
-
-               if (event.events & EPOLLOUT) { // Write Event
-
-               }
-
-           }
-
-
-           /**
-            * MacOS
-            */
-            if (event.flags & (unsigned)EV_EOF) { // disconnection event
-
-                auto ctx = reinterpret_cast<SocketContext *>(event.udata);
-
-                this->HandleDisconnectionEvent(ctx);
-
-            } else if (event.ident == this->GetHandle()) { // new client connection event
+            if (result.Context == nullptr) {
 
                 this->HandleNewConnectionEvent();
 
-            } else if (event.filter == EventType::Read) { // new client message
+            } else {
 
-                auto ctx = reinterpret_cast<SocketContext *>(event.udata);
+                switch (result.Type)
+                {
+                    case Read:
 
-                try {
-                    this->HandleMessageEvent(ctx);
-                } catch (...) {
-                    fprintf(stderr, "Error HandleMessageEvent\n");
+                        try {
+                            this->HandleMessageEvent(result.Context);
+                        } catch (...) {
+                            fprintf(stderr, "Error HandleMessageEvent\n");
+                        }
+
+                        break;
+                    case Write:
+
+                        //TODO(Levezinho): Think about how we can handle this case.
+
+                        break;
+                    case Disconnect:
+
+                        this->HandleDisconnectionEvent(result.Context);
+
+                        break;
                 }
+
             }
         }
 
