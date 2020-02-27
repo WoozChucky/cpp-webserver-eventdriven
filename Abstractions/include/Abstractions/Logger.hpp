@@ -6,6 +6,6 @@
 #define LOGGER_HPP
 
 #define TRACE(fmt, ...) \
-    fprintf(stderr, "[DBG - %s] %s::%d::%s: " fmt "\n", __TIME__, __FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__)
+    fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __PRETTY_FUNCTION__, __LINE__,  __VA_ARGS__)
 
 #endif //LOGGER_HPP
