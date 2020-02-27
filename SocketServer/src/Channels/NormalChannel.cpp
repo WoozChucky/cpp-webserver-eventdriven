@@ -2,9 +2,9 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include "NormalChannel.hpp"
+#include "Socket/Channels/NormalChannel.hpp"
 
-#include "../NetUtils.hpp"
+#include "Socket/NetUtils.hpp"
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>

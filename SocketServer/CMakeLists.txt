@@ -14,12 +14,12 @@ set(Headers
         include/Socket/Server.hpp)
 
 set(Sources
-        src/NetUtils.hpp
+        include/Socket/NetUtils.hpp
         src/NetUtils.cpp
-        src/Channels/SecureChannel.hpp
+        include/Socket/Channels/SecureChannel.hpp
         src/Channels/NormalChannel.cpp
         src/Channels/SecureChannel.cpp
-        src/Channels/NormalChannel.hpp
+        include/Socket/Channels/NormalChannel.hpp
         src/Server.cpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

@@ -5,16 +5,11 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <Socket/Sugar.hpp>
 #include <Abstractions/MemoryPool.hpp>
+#include <Socket/Sugar.hpp>
 #include <Socket/Channels/IChannel.hpp>
 #include <Socket/Events/MacEventManager.hpp>
-#include <netinet/in.h>
-#include <functional>
 #include <Socket/Events/EventHandler.hpp>
-
-using OnMessageDelegate = std::function<void(SocketContext* ctx, std::string& message)>;
-using OnClientDelegate =  std::function<void(SocketContext* ctx)>;
 
 class Server {
 

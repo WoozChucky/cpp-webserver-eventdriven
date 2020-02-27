@@ -8,6 +8,7 @@
 #include <string>
 #include <tls.h>
 #include <vector>
+#include <functional>
 
 using U8    = uint8_t;
 using U16   = uint16_t;
@@ -34,11 +35,17 @@ using TLS               = struct tls;
 using TLSConfig         = struct tls_config;
 
 #if LINUX
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <sys/epoll.h>
+
 using Event             = struct epoll_event;
 #endif
+
 #if MACOS
 using Event             = struct kevent;
 #endif
+
 #if WINDOWS
 
 #endif
@@ -169,5 +176,8 @@ typedef struct HandledEvent {
     SocketContext* Context;
     EventType Type;
 } HandledEvent;
+
+using OnMessageDelegate = std::function<void(SocketContext* ctx, std::string& message)>;
+using OnClientDelegate =  std::function<void(SocketContext* ctx)>;
 
 #endif //SUGAR_HPP

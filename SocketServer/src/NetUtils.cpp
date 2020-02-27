@@ -2,7 +2,7 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include "NetUtils.hpp"
+#include <Socket/NetUtils.hpp>
 
 #include <Socket/Sugar.hpp>
 #include <arpa/inet.h>

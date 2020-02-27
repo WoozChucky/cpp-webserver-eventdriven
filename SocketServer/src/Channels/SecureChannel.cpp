@@ -2,14 +2,14 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include "SecureChannel.hpp"
+#include "Socket/Channels/SecureChannel.hpp"
 
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <Abstractions/File.hpp>
 #include <Abstractions/Logger.hpp>
-#include "../NetUtils.hpp"
+#include <Socket/NetUtils.hpp>
 #include <cstring>
 
 void SecureChannel::prepare() {
@@ -94,6 +94,8 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
         exit(1);
     }
 
+    tls_handshake(outContext->TLS);
+
     auto ctx = Net::Utils::ContextFromSocketHandle(socket);
 
     outContext->Socket = ctx.Socket;
@@ -107,7 +109,7 @@ void SecureChannel::DisposeConnection(SocketContext* ctx) {
     auto ret = tls_close(ctx->TLS);
 
     if (ret < 0) {
-        TRACE("%s: %s", "tls_accept_socket error", tls_error(ctx->TLS));
+        TRACE("%s: %s", "tls_close error", tls_error(ctx->TLS));
     }
 
     tls_free(ctx->TLS);
@@ -170,7 +172,6 @@ void SecureChannel::LoadPublicKey(const char *filename) {
 
     if (!File::Exists(filename)) {
         throw std::runtime_error("Failed to find file with PublicKey.");
-        // std::format("Hello {}!\n", "world");
     }
 
     this->pub = File::ReadAllBytes(filename);

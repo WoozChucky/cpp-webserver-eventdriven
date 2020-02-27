@@ -4,24 +4,24 @@
 
 #include <Socket/Server.hpp>
 
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <unistd.h>
+#include <Abstractions/Logger.hpp>
+#include <Socket/Sugar.hpp>
+#include <Socket/Events/EventHandler.hpp>
+#include <Socket/Channels/SecureChannel.hpp>
+#include <Socket/Channels/NormalChannel.hpp>
 
 #if MACOS
 #include <sys/event.h>
 #endif
 
 #if LINUX
-#include <sys/epoll.h>
 #include <cassert>
 #include <cstring>
-#include <Socket/Events/EventHandler.hpp>
-
+#include <fcntl.h>
+#include <unistd.h>
 #endif
 
-#include "Channels/SecureChannel.hpp"
-#include "Channels/NormalChannel.hpp"
+
 
 Server::Server()
         : serverSocket(0), serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
@@ -130,7 +130,7 @@ void Server::HandleConnections() {
 
     int maxEvents = 32;
     auto evtList = static_cast<Event *>(malloc(sizeof(Event) * maxEvents));
-    int nEvents = 0;
+    int nEvents;
 
     while (this->running) {
 
@@ -154,7 +154,7 @@ void Server::HandleConnections() {
                         try {
                             this->HandleMessageEvent(result.Context);
                         } catch (...) {
-                            fprintf(stderr, "Error HandleMessageEvent\n");
+                            TRACE("%s", "Error HandleMessageEvent");
                         }
 
                         break;
@@ -226,11 +226,11 @@ void Server::HandleMessageEvent(SocketContext *ctx) {
             this->messageDelegate(ctx, buffer);
 
         } else {
-            fprintf(stdout, "Received a message, but no message delegate was defined.\n");
+            TRACE("%s", "Received a message, but no message delegate was defined.");
         }
 
     } else {
-        fprintf(stdout, "Received a message, but no bytes could be read.\n");
+        TRACE("%s", "Received a message, but no bytes could be read.");
     }
 
 }
