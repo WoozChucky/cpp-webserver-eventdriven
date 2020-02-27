@@ -35,6 +35,10 @@ private:
     HttpParser* GetParser();
     EventManager* GetEventManager();
     Server* GetTransport();
+
+    void onClientConnected(SocketContext* ctx);
+    void onClientDisconnected(SocketContext* ctx);
+    void onClientMessage(SocketContext* ctx, const std::string& messageBuffer);
 };
 
 #endif //HTTPSERVER_HPP

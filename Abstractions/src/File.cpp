@@ -5,7 +5,7 @@
 #include <Abstractions/File.hpp>
 #include <fstream>
 
-std::vector<char> File::ReadAllBytes(const char *filename) {
+std::vector<char> File::ReadAllBytes(const std::string& filename) {
 
     std::ifstream ifs(filename, std::ios::binary|std::ios::ate);
 
@@ -22,4 +22,11 @@ std::vector<char> File::ReadAllBytes(const char *filename) {
     ifs.close();
 
     return result;
+}
+
+bool File::Exists(const std::string& filename) {
+
+    std::ifstream infile(filename);
+
+    return infile.good();
 }

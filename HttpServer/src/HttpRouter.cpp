@@ -20,9 +20,9 @@ void HttpRouter::AddRoute(const std::string& path, const HttpHandler& handler) {
 void HttpRouter::AddRoute(const std::string& path, HttpMethod method, HttpHandler handler) {
 
     //  TODO(Levezinho)
-    //  Check if path exists, if it does check if httpmethod already exists, it it doesnt, add
-    //  the handler to that path with the specific method pass by arg. If that method already exists
-    // as well, then deny the new route.
+    //  Check if the path exists, if it does, check if httpmethod already exists, if it doesnt, add
+    //  the handler to that path with the specific method passed by arg. If that method already exists
+    //  as well, then deny the new route. Maybe a TRACE() call or exception ?
 
     Route route;
     route[method] = std::move(handler);

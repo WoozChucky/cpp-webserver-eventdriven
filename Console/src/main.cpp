@@ -31,8 +31,6 @@ The non-blocking tcp server can be implemented as follows:
 
 int main(int argc, char **argv) {
 
-    TRACE("%s - %d", "a", 5);
-
     auto builder = new SocketOptionBuilder();
     auto options = builder
             ->WithReuseAddress()
@@ -45,7 +43,7 @@ int main(int argc, char **argv) {
             ->WithPrivateKey("key.pem")
             ->Build();
 
-    auto http = new HttpServer();
+    auto http = new HttpServer(options);
 
     http->Handle("/",
             [](HttpRequest* request, HttpResponse* response) -> void {

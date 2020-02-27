@@ -84,7 +84,6 @@ void Server::Boot() {
 
     this->manager->RegisterEvent(this->GetHandle(), EventType::Read, EventAction::Add);
 
-
     this->running = true;
 
     this->HandleConnections();

@@ -28,6 +28,7 @@ void SecureChannel::prepare() {
     }
 
     _serverTls = tls_server();
+
     if(_serverTls == nullptr) {
         TRACE("%s", "tls_server error");
         exit(1);
@@ -64,13 +65,21 @@ void SecureChannel::prepare() {
 
 SecureChannel::SecureChannel(const std::string& certificatePath, const std::string& privateKeyPath) {
     this->memoryPool = new MemoryPool(4096, 5, 100);
-    LoadPublicKey(certificatePath.c_str());
-    LoadPrivateKey(privateKeyPath.c_str());
+
+    try {
+
+        LoadPublicKey(certificatePath.c_str());
+        LoadPrivateKey(privateKeyPath.c_str());
+
+    } catch (const std::exception& e) {
+        TRACE("%s", e.what());
+        throw;
+    }
 }
 
 void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outContext) {
 
-    prepare();
+    this->prepare();
 
     // accept the client
     auto socket = accept(handle, nullptr, nullptr);
@@ -80,7 +89,7 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
 
     fcntl(socket, F_SETFL, O_NONBLOCK); // Mark socket as non blocking
 
-    if (tls_accept_socket(_serverTls, &outContext->TLS, socket)) {
+    if (tls_accept_socket(_serverTls, &outContext->TLS, socket) != 0) {
         TRACE("%s: %s", "tls_accept_socket error", tls_error(_serverTls));
         exit(1);
     }
@@ -141,23 +150,31 @@ std::string SecureChannel::Read(SocketContext *ctx) {
 
 size_t SecureChannel::Write(SocketContext* ctx, Memory data, size_t dataLength) {
 
-
     return tls_write(ctx->TLS, data, dataLength);
 
 }
 
 void SecureChannel::LoadPrivateKey(const char *filename) {
 
+    if (!File::Exists(filename)) {
+        throw std::runtime_error("Failed to find file with PrivateKey.");
+    }
+
     this->key = File::ReadAllBytes(filename);
 
-    this->privateKey = reinterpret_cast<const uint8_t *>(key.data());
+    this->privateKey = reinterpret_cast<const U8 *>(key.data());
     this->privateKeySize = key.size();
 }
 
 void SecureChannel::LoadPublicKey(const char *filename) {
 
+    if (!File::Exists(filename)) {
+        throw std::runtime_error("Failed to find file with PublicKey.");
+        // std::format("Hello {}!\n", "world");
+    }
+
     this->pub = File::ReadAllBytes(filename);
 
-    this->publicKey = reinterpret_cast<const uint8_t *>(pub.data());
+    this->publicKey = reinterpret_cast<const U8 *>(pub.data());
     this->publicKeySize = pub.size();
 }
