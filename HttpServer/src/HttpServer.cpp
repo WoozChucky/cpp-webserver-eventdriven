@@ -67,27 +67,33 @@ void HttpServer::Boot() {
     this->GetTransport()->Boot();
 }
 
-void HttpServer::Handle(const std::string& path, const HttpHandler& handler) {
+void HttpServer::Handle(const std::string& path, const HttpHandler& handler) const
+{
     this->GetRouter()->AddRoute(path, handler);
 }
 
-void HttpServer::Handle(const std::string& path, HttpMethod method, HttpHandler handler) {
+void HttpServer::Handle(const std::string& path, HttpMethod method, HttpHandler handler) const
+{
     this->GetRouter()->AddRoute(path, method, std::move(handler));
 }
 
-HttpRouter *HttpServer::GetRouter() {
+HttpRouter *HttpServer::GetRouter() const
+{
     return this->_router;
 }
 
-HttpParser *HttpServer::GetParser() {
+HttpParser *HttpServer::GetParser() const
+{
     return this->_parser;
 }
 
-EventManager *HttpServer::GetEventManager() {
+EventManager *HttpServer::GetEventManager() const
+{
     return this->_eventManager;
 }
 
-Server *HttpServer::GetTransport() {
+Server *HttpServer::GetTransport() const
+{
     return this->_server;
 }
 
@@ -149,7 +155,7 @@ void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageB
                            "\r\n";
     }
 
-    this->GetTransport()->GetChannel()->Write(ctx, (void *) responseString.c_str(), responseString.size());
+    this->GetTransport()->GetChannel()->Write(ctx, Memory(responseString.c_str()), responseString.size());
 
     if (request.GetHeader("Connection").GetValue() == "close")
         this->GetTransport()->HandleDisconnectionEvent(ctx);

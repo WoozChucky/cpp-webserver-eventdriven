@@ -21,8 +21,8 @@ public:
 
     void Boot();
 
-    void Handle(const std::string& path, const HttpHandler& handler);
-    void Handle(const std::string& path, HttpMethod method, HttpHandler handler);
+    void Handle(const std::string& path, const HttpHandler& handler) const;
+    void Handle(const std::string& path, HttpMethod method, HttpHandler handler) const;
 
 private:
     Server* _server;
@@ -31,10 +31,10 @@ private:
     HttpParser* _parser;
     ServerConfiguration* _configuration;
 
-    HttpRouter* GetRouter();
-    HttpParser* GetParser();
-    EventManager* GetEventManager();
-    Server* GetTransport();
+    HttpRouter* GetRouter() const;
+    HttpParser* GetParser() const;
+    EventManager* GetEventManager() const;
+    Server* GetTransport() const;
 
     void onClientConnected(SocketContext* ctx);
     void onClientDisconnected(SocketContext* ctx);

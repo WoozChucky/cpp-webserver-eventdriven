@@ -10,7 +10,8 @@ HttpHeader::HttpHeader(std::string key, std::string value) {
     this->_value = std::move(value);
 }
 
-const std::string &HttpHeader::operator[](const std::string &key) {
+std::string HttpHeader::operator[](const std::string &key) const
+{
     if (this->_key == key)
         return _value;
     return "";

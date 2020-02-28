@@ -21,12 +21,12 @@ public:
             HttpHeaders headers,
             std::string body);
 
-    const HttpMethod& GetMethod();
-    const HttpProtocol& GetProtocol();
-    const HttpHeaders& GetHeaders();
-    const HttpHeader& GetHeader(const std::string& key);
-    const std::string& GetBody();
-    const std::string& GetPath();
+    const HttpMethod& GetMethod() const;
+    const HttpProtocol& GetProtocol() const;
+    const HttpHeaders& GetHeaders() const;
+    HttpHeader GetHeader(const std::string& key);
+    const std::string& GetBody() const;
+    const std::string& GetPath() const;
 
 private:
 

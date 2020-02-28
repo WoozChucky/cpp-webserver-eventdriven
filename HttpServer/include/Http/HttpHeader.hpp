@@ -14,7 +14,7 @@ public:
 
     explicit HttpHeader(std::string key, std::string value);
 
-    const std::string& operator [](const std::string& key);
+    std::string operator [](const std::string& key) const;
 
     [[nodiscard]] const std::string & GetValue() const;
     [[nodiscard]] const std::string & GetKey() const;
