@@ -15,19 +15,23 @@ HttpRequest::HttpRequest(std::string path, HttpProtocol protocol, HttpMethod met
     this->_body = std::move(body);
 }
 
-const HttpMethod &HttpRequest::GetMethod() {
+const HttpMethod &HttpRequest::GetMethod() const
+{
     return _method;
 }
 
-const HttpProtocol &HttpRequest::GetProtocol() {
+const HttpProtocol &HttpRequest::GetProtocol() const
+{
     return _protocol;
 }
 
-const HttpHeaders &HttpRequest::GetHeaders() {
+const HttpHeaders &HttpRequest::GetHeaders() const
+{
     return _headers;
 }
 
-const HttpHeader &HttpRequest::GetHeader(const std::string& key) {
+HttpHeader HttpRequest::GetHeader(const std::string& key)
+{
     for(auto& ref : _headers) {
         if (ref.GetKey() == key)
             return ref;
@@ -35,10 +39,12 @@ const HttpHeader &HttpRequest::GetHeader(const std::string& key) {
     return HttpHeader("", "");
 }
 
-const std::string& HttpRequest::GetBody() {
+const std::string& HttpRequest::GetBody() const
+{
     return _body;
 }
 
-const std::string &HttpRequest::GetPath() {
+const std::string &HttpRequest::GetPath() const
+{
     return _path;
 }

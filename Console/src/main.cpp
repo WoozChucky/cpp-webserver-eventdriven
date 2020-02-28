@@ -58,7 +58,14 @@ int main(int argc, char **argv) {
         // do stuff
     });
 
-    http->Boot();
+    try {
+        http->Boot();
+    } catch (std::exception& e) {
+        TRACE("%s", e.what());
+    }
+
+
+
 
     return 0;
 }

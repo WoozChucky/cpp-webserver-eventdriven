@@ -65,9 +65,9 @@ HttpRequest HttpParser::RequestFromBuffer(const std::string& buffer) {
 
     HttpHeaders headers;
 
-    bool hasBody = RequestHasBody(httpMethod);
+    auto hasBody = RequestHasBody(httpMethod);
 
-    int headerCount = 0;
+    auto headerCount = 0;
 
     for(unsigned long idx = 0; idx < lines.size() - 1; idx++) {
         auto key = get_left_of_delim(lines[idx], ":");
@@ -82,7 +82,7 @@ HttpRequest HttpParser::RequestFromBuffer(const std::string& buffer) {
 
     auto body = lines.empty() ? "" :  lines[0];
 
-    HttpRequest request = HttpRequest(path, HttpProtocol::V1_1, httpMethod, headers, body);
+    auto request = HttpRequest(path, HttpProtocol::V1_1, httpMethod, headers, body);
 
     return request;
 }
