@@ -26,7 +26,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
+# include_directories(/usr/local/Cellar/openssl@1.1/1.1.1c/include)
 include_directories(${LIBRESSL_INCLUDE_DIR})
 
 if(APPLE)
@@ -46,10 +46,6 @@ if(MSVC)
             -D_CRT_SECURE_NO_WARNINGS
             -DEXPORT_LIBRARY
     )
-endif()
-
-if(1)
-    add_definitions(-DDEBUG_ENABLED)
 endif()
 
 add_library(${This} SHARED ${Sources} ${Headers})

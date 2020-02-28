@@ -5,7 +5,16 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#define TRACE(fmt, ...) \
-    fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __PRETTY_FUNCTION__, __LINE__,  __VA_ARGS__)
+#include <string>
+#include <cstring>
+#include <cstdarg>
+
+#if DEBUG_ENABLED
+    #define TRACE(fmt, ...) \
+        fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __PRETTY_FUNCTION__, __LINE__,  __VA_ARGS__)
+#else
+    #define TRACE(fmt, ...) \
+     //
+#endif
 
 #endif //LOGGER_HPP

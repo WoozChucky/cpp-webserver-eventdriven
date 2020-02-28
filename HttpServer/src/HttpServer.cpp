@@ -107,7 +107,6 @@ void HttpServer::onClientDisconnected(SocketContext* ctx) {
 
 void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageBuffer) {
 
-    #if DEBUG_ENABLED
     if (ctx->Socket.Handle > 0) {
         TRACE("\t[%d][%s:%d] - PACKET\n--- PACKET START\n%s\n--- PACKET END\n",
                 ctx->Socket.Handle,
@@ -115,7 +114,6 @@ void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageB
                 ctx->Socket.Port,
                 messageBuffer.c_str());
     }
-    #endif
 
     auto request = this->GetParser()->RequestFromBuffer(messageBuffer);
 

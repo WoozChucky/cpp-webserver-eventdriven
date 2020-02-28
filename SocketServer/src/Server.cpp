@@ -21,7 +21,20 @@
 #include <unistd.h>
 #endif
 
+std::string FormatError(const char * format, ...) {
 
+    char buffer[256];
+
+    va_list args;
+
+    va_start(args, format);
+
+    vsprintf(buffer, format, args);
+
+    va_end(args);
+
+    return buffer;
+}
 
 Server::Server()
         : serverSocket(0), serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
@@ -53,7 +66,7 @@ void Server::Setup() {
 
     for(auto option : this->_configuration->SocketOptions) {
         if (!this->SetSocketOption(option)) {
-            fprintf(stdout, "Failed to set socket option %d.\n", option);
+            TRACE("Failed to set socket option %d.", option);
         }
     }
 
@@ -72,14 +85,16 @@ void Server::Boot() {
 
     fcntl(this->serverSocket, F_SETFL, O_NONBLOCK); // Mark server socket as non blocking
 
-    if (bind(this->serverSocket, (struct sockaddr *)&this->serverAddress, sizeof(SocketAddress)) == -1) {
-        perror("bind()");
+    if (bind(this->serverSocket, (struct sockaddr *)&this->serverAddress, sizeof(SocketAddress)) < 0) {
+        TRACE("%s %s.", "Socket bind() failed.", strerror(errno));
         close(this->serverSocket);
+        throw std::runtime_error(FormatError("%s %s.", "Socket bind() failed.", strerror(errno)));
     }
 
-    if (listen(this->serverSocket, this->_configuration->MaxQueuedConnections) == -1) {
-        perror("listen()");
+    if (listen(this->serverSocket, this->_configuration->MaxQueuedConnections) < 0) {
+        TRACE("%s %s.", "Socket listen() failed.", strerror(errno));
         close(this->serverSocket);
+        throw std::runtime_error(FormatError("%s %s.", "Socket listen() failed.", strerror(errno)));
     }
 
     this->manager->RegisterEvent(this->GetHandle(), EventType::Read, EventAction::Add);

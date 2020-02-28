@@ -77,6 +77,9 @@ if(ParentDirectory STREQUAL "")
         add_definitions(-DWINDOWS)
     endif()
 
+    # Enable TRACE calls.
+    add_definitions(-DDEBUG_ENABLED)
+
     # Google Test
     set(BUILD_GTEST ON CACHE BOOL "Builds the googletest subproject" FORCE)
     set(BUILD_GMOCK ON CACHE BOOL "Builds the googlemock subproject" FORCE)

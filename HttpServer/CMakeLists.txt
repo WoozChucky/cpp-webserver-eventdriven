@@ -33,10 +33,6 @@ if(MSVC)
     )
 endif()
 
-if(1)
-    add_definitions(-DDEBUG_ENABLED)
-endif()
-
 add_library(${This} SHARED ${Sources} ${Headers})
 
 find_package(LibreSSL REQUIRED)
