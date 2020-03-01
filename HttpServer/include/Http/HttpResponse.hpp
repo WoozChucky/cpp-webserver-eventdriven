@@ -5,9 +5,19 @@
 #ifndef HTTPRESPONSE_HPP
 #define HTTPRESPONSE_HPP
 
+#include <Socket/Sugar.hpp>
 #include <Http/HttpStatusCode.hpp>
 
 class HttpResponse {
+
+public:
+
+    struct Memoria {
+        Memory Get();
+        U16 Size();
+    };
+
+    Memoria Memory;
 
 private:
 

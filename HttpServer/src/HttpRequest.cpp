@@ -30,13 +30,13 @@ const HttpHeaders &HttpRequest::GetHeaders() const
     return _headers;
 }
 
-HttpHeader HttpRequest::GetHeader(const std::string& key)
+const std::string& HttpRequest::GetHeader(const std::string& key) const
 {
     for(auto& ref : _headers) {
         if (ref.GetKey() == key)
-            return ref;
+            return ref.GetValue();
     }
-    return HttpHeader("", "");
+    return "";
 }
 
 const std::string& HttpRequest::GetBody() const

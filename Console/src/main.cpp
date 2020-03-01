@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
     http->Handle("/",
             [](HttpRequest* request, HttpResponse* response) -> void {
         // do stuff
-        fprintf(stdout, "%s\n", request->GetHeader("Content-Length").GetValue().c_str());
-        fprintf(stdout, "%s\n", request->GetBody().c_str());
+        TRACE("%s", request->GetHeader("Content-Length").data());
+        TRACE("%s", request->GetBody().data());
     });
 
     http->Handle("/register",

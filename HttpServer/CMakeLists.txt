@@ -2,7 +2,7 @@
 #
 # © 2019 by Nuno Silva
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.13)
 set(This HttpServer)
 
 set(Headers
@@ -19,7 +19,7 @@ set(Headers
         include/Http/HttpStatusCode.hpp)
 
 set(Sources
-        src/HttpServer.cpp src/HttpParser.cpp src/HttpHeader.cpp src/HttpRouter.cpp src/HttpRequest.cpp)
+        src/HttpServer.cpp src/HttpParser.cpp src/HttpHeader.cpp src/HttpRouter.cpp src/HttpRequest.cpp src/HttpResponse.cpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

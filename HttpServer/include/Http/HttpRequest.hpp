@@ -24,7 +24,7 @@ public:
     const HttpMethod& GetMethod() const;
     const HttpProtocol& GetProtocol() const;
     const HttpHeaders& GetHeaders() const;
-    HttpHeader GetHeader(const std::string& key);
+    const std::string& GetHeader(const std::string& key) const;
     const std::string& GetBody() const;
     const std::string& GetPath() const;
 

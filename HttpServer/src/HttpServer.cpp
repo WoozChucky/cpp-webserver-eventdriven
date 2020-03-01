@@ -98,14 +98,14 @@ Server *HttpServer::GetTransport() const
 }
 
 void HttpServer::onClientConnected(SocketContext* ctx) {
-    TRACE("\t[%d][%s:%d] - CONNECTION\n",
+    TRACE("[%d][%s:%d] - Connected.",
           ctx->Socket.Handle,
           ctx->Socket.Address.c_str(),
           ctx->Socket.Port);
 }
 
 void HttpServer::onClientDisconnected(SocketContext* ctx) {
-    TRACE("\t[%d][%s:%d] - DISCONNECTION\n",
+    TRACE("[%d][%s:%d] - Disconnected",
           ctx->Socket.Handle,
           ctx->Socket.Address.c_str(),
           ctx->Socket.Port);
@@ -114,7 +114,7 @@ void HttpServer::onClientDisconnected(SocketContext* ctx) {
 void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageBuffer) {
 
     if (ctx->Socket.Handle > 0) {
-        TRACE("\t[%d][%s:%d] - PACKET\n--- PACKET START\n%s\n--- PACKET END\n",
+        TRACE("\t[%d][%s:%d] - Sent a message.\n### PACKET START ###\n%s\n### PACKET END ###",
                 ctx->Socket.Handle,
                 ctx->Socket.Address.c_str(),
                 ctx->Socket.Port,
@@ -123,7 +123,7 @@ void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageB
 
     auto request = this->GetParser()->RequestFromBuffer(messageBuffer);
 
-    HttpResponse response{};
+    auto* response = new HttpResponse();
 
     auto handler = this->GetRouter()->GetHandler(request.GetPath(), request.GetMethod());
 
@@ -132,7 +132,7 @@ void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageB
     if (handler != nullptr) {
         auto startTime = std::chrono::high_resolution_clock::now();
 
-        handler(&request, &response);
+        handler(&request, response);
 
         auto endTime = std::chrono::high_resolution_clock::now();
 
@@ -154,9 +154,10 @@ void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageB
                            "Content-Length: 0\r\n"
                            "\r\n";
     }
+    
+    // Memory(responseString.c_str())
+    this->GetTransport()->GetChannel()->Write(ctx, response->Memory.Get(), response->Memory.Size());
 
-    this->GetTransport()->GetChannel()->Write(ctx, Memory(responseString.c_str()), responseString.size());
-
-    if (request.GetHeader("Connection").GetValue() == "close")
+    if (request.GetHeader("Connection") == "close")
         this->GetTransport()->HandleDisconnectionEvent(ctx);
 }
