@@ -50,10 +50,11 @@ using Event             = struct kevent;
 
 #endif
 
-enum EventType {
+enum EventType : S16 {
     Read        = (-1),
     Write       = (-2),
-    Disconnect  = (-3)
+    Disconnect  = (-3),
+    Weird       = (-10)
 };
 
 enum EventAction {

@@ -94,8 +94,6 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
         exit(1);
     }
 
-    tls_handshake(outContext->TLS);
-
     auto ctx = Net::Utils::ContextFromSocketHandle(socket);
 
     outContext->Socket = ctx.Socket;

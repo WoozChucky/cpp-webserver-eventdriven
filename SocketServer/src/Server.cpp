@@ -176,12 +176,16 @@ void Server::HandleConnections() {
                     case Write:
 
                         //TODO(Levezinho): Think about how we can handle this case.
+                        TRACE("%s", "Socket Wanted to Write!");
 
                         break;
                     case Disconnect:
 
                         this->HandleDisconnectionEvent(result.Context);
 
+                        break;
+                    case Weird:
+                        TRACE("%s", "Socket Wanted to Write!");
                         break;
                 }
 

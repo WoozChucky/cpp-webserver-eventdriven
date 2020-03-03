@@ -11,7 +11,7 @@ EventHandler::EventHandler(EventHandle serverHandle) : _serverHandle(serverHandl
 
 HandledEvent EventHandler::DigestEvent(Event event) {
 
-    HandledEvent evt;
+    HandledEvent evt{nullptr, Weird};
 
     if (event.data.fd == this->_serverHandle) {
 
