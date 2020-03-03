@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <mutex>
+#include "Logger.hpp"
 
 /**
  * @brief A simple pool for fixed-size memory blocks.
@@ -50,7 +51,7 @@ public:
     template <typename T>
     inline T* Allocate() {
         if (sizeof(T) > BlockSize()) {
-            fprintf(stdout, "Not enough memory in a block\n");
+            TRACE("%s", "Not enough memory in a block.");
             return nullptr;
         } else {
             return reinterpret_cast<T*>(GetMemory());

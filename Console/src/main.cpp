@@ -50,6 +50,20 @@ int main(int argc, char **argv) {
         // do stuff
         TRACE("%s", request->GetHeader("Content-Length").data());
         TRACE("%s", request->GetBody().data());
+
+        response->SetStatusCode(HttpStatusCode::OK);
+        response->SetProtocol(HttpProtocol::V1_1);
+        response->SetBody("{\"obj\": true}");
+        response->AddHeader(HttpHeader("Connection", "Keep-Alive"));
+        response->AddHeader(HttpHeader("Content-Type", "application/json"));
+
+        std::string responseString =   "HTTP/1.1 200 OK\r\n"
+                           "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+                           "Connection: Keep-Alive\r\n"
+                           "Content-Type: text/html\r\n"
+                           "Content-Length: 13\r\n"
+                           "\r\n"
+                           "{\"obj\": true}";
     });
 
     http->Handle("/register",

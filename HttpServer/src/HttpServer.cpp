@@ -130,34 +130,36 @@ void HttpServer::onClientMessage(SocketContext *ctx, const std::string &messageB
     std::string responseString;
 
     if (handler != nullptr) {
+
         auto startTime = std::chrono::high_resolution_clock::now();
 
         handler(&request, response);
 
         auto endTime = std::chrono::high_resolution_clock::now();
 
-        TRACE("Request took %ld ms\n",
-                std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count());
+        std::chrono::duration<double> duration = (endTime - startTime);
+        auto durationInMs = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
 
-        responseString =   "HTTP/1.1 200 OK\r\n"
-                           "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                           "Connection: Keep-Alive\r\n"
-                           "Content-Type: text/html\r\n"
-                           "Content-Length: 13\r\n"
-                           "\r\n"
-                           "{\"obj\": true}";
+        TRACE("Request took %ld ms", durationInMs.count());
+
     } else {
-        responseString =   "HTTP/1.1 404 Not Found\r\n"
-                           "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                           "Connection: Keep-Alive\r\n"
-                           "Content-Type: application/json\r\n"
-                           "Content-Length: 0\r\n"
-                           "\r\n";
+
+        // No handler has been found, return 404.
+        response->SetStatusCode(HttpStatusCode::NOT_FOUND);
+        response->SetProtocol(HttpProtocol::V1_1);
+        response->AddHeader(HttpHeader("Connection", "Close"));
+        response->AddHeader(HttpHeader("Content-Type", "text/html"));
+        response->AddHeader(HttpHeader("Content-Length", "0"));
     }
-    
-    // Memory(responseString.c_str())
-    this->GetTransport()->GetChannel()->Write(ctx, response->Memory.Get(), response->Memory.Size());
+
+    auto written = this->WriteResponse(ctx, response);
+
+    TRACE("Written %d bytes as response.", written);
 
     if (request.GetHeader("Connection") == "close")
         this->GetTransport()->HandleDisconnectionEvent(ctx);
+}
+
+U16 HttpServer::WriteResponse(SocketContext *ctx, HttpResponse *response) {
+    return this->GetTransport()->GetChannel()->Write(ctx, response->GetBuffer(), response->GetBufferSize());
 }

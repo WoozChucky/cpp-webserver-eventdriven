@@ -7,21 +7,31 @@
 
 #include <Socket/Sugar.hpp>
 #include <Http/HttpStatusCode.hpp>
+#include <Http/HttpHeader.hpp>
+#include <Http/HttpProtocol.hpp>
+#include <Http/HttpContext.hpp>
+
 
 class HttpResponse {
 
 public:
 
-    struct Memoria {
-        Memory Get();
-        U16 Size();
-    };
+    explicit HttpResponse();
 
-    Memoria Memory;
+    U16 GetBufferSize();
+    Memory GetBuffer();
 
+    void SetBody(std::string body);
+    void SetStatusCode(HttpStatusCode code);
+    void SetProtocol(HttpProtocol protocol);
+    void AddHeader(const HttpHeader& header);
 private:
 
     HttpStatusCode _code;
+    HttpProtocol _protocol;
+    HttpHeaders _headers;
+    HttpContext _context;
+    std::string _body;
 };
 
 #endif //HTTPRESPONSE_HPP

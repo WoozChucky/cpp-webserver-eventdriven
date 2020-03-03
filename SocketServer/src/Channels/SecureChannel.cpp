@@ -147,6 +147,8 @@ std::string SecureChannel::Read(SocketContext *ctx) {
 
     this->memoryPool->Release(readStream);
 
+    TRACE("Read %d total bytes.", totalReadBytes);
+
     return fullBufferedRequest;
 }
 
