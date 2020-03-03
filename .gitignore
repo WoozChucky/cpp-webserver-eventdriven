@@ -16,3 +16,4 @@ lib/
 cmake-build-debug/
 
 build/
+/.vs/

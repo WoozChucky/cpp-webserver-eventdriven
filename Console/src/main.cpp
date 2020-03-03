@@ -62,10 +62,8 @@ int main(int argc, char **argv) {
         http->Boot();
     } catch (std::exception& e) {
         TRACE("%s", e.what());
+        return EXIT_FAILURE;
     }
 
-
-
-
-    return 0;
+    return EXIT_SUCCESS;
 }
