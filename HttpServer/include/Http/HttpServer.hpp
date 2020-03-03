@@ -31,14 +31,16 @@ private:
     HttpParser* _parser;
     ServerConfiguration* _configuration;
 
-    HttpRouter* GetRouter() const;
-    HttpParser* GetParser() const;
-    EventManager* GetEventManager() const;
-    Server* GetTransport() const;
+    [[nodiscard]] HttpRouter* GetRouter() const;
+    [[nodiscard]] HttpParser* GetParser() const;
+    [[nodiscard]] EventManager* GetEventManager() const;
+    [[nodiscard]] Server* GetTransport() const;
 
     void onClientConnected(SocketContext* ctx);
     void onClientDisconnected(SocketContext* ctx);
     void onClientMessage(SocketContext* ctx, const std::string& messageBuffer);
+
+    U16 WriteResponse(SocketContext* ctx, HttpResponse* response);
 };
 
 #endif //HTTPSERVER_HPP

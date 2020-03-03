@@ -54,7 +54,7 @@ void *MemoryPool::GetMemory()
             return new char[_block_size];
         }
         else
-            throw ("MemoryPool exhausted.");
+            throw std::runtime_error("MemoryPool exhausted.");
     }
     else
     {
