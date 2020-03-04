@@ -50,10 +50,11 @@ using Event             = struct kevent;
 
 #endif
 
-enum EventType {
+enum EventType : S16 {
     Read        = (-1),
     Write       = (-2),
-    Disconnect  = (-3)
+    Disconnect  = (-3),
+    Weird       = (-10)
 };
 
 enum EventAction {
@@ -147,6 +148,15 @@ typedef struct Socket {
      * @brief Specifies the socket blocking mode.
      */
     BlockingMode Mode;
+
+    Socket& operator =(const Socket& s) {
+        this->Address = s.Address;
+        this->Type = s.Type;
+        this->Port = s.Port;
+        this->Mode = s.Mode;
+        this->Handle = s.Handle;
+        return *this;
+    }
 
 } Socket;
 

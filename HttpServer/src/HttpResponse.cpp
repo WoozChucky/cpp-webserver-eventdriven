@@ -22,7 +22,7 @@ Memory HttpResponse::GetBuffer() {
     // response->AddHeader(HttpHeader("Content-Length", "13"));
 
     std::string responseString =   "HTTP/1.1 200 OK\r\n"
-                                   "Date: Mon, 16 Sep 2020 09:10:10 GMT\r\n"
+                                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
                                    "Connection: Keep-Alive\r\n"
                                    "Content-Type: application/json\r\n"
                                    "Content-Length: 13\r\n"
@@ -44,9 +44,11 @@ U16 HttpResponse::GetBufferSize() {
                                    "\r\n"
                                    "{\"obj\": true}";
 
-    TRACE("%s", "Getting buffer size.");
+    U16 size = responseString.size();
 
-    return responseString.size();
+    TRACE("Getting buffer size - %d.", size);
+
+    return size;
 }
 
 void HttpResponse::SetBody(std::string body) {
