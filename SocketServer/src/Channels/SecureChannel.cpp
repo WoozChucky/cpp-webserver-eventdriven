@@ -4,6 +4,10 @@
 
 #include "Socket/Channels/SecureChannel.hpp"
 
+#include <tls.h>
+#include <openssl/bio.h>
+#include <openssl/pem.h>
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -16,10 +20,6 @@ void SecureChannel::prepare() {
 
     unsigned int protocols = 0;
     std::string ciphers = "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384";
-
-    if (tls_init() < 0) {
-        TRACE("%s", "Error init");
-    }
 
     _tlsConfig = tls_config_new();
     if(_tlsConfig == nullptr) {
@@ -103,8 +103,6 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
 }
 
 void SecureChannel::DisposeConnection(SocketContext* ctx) {
-
-    // std::lock_guard<std::mutex> lock{_mutex};
 
     auto ret = tls_close(ctx->TLS);
 

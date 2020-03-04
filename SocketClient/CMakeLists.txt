@@ -3,24 +3,14 @@
 # © 2019 by Nuno Silva
 
 cmake_minimum_required(VERSION 3.13)
-set(This SocketServer)
+set(This SocketClient)
 
 set(Headers
-        include/Socket/Sugar.hpp
-        include/Socket/Channels/IChannel.hpp
-        include/Socket/Events/MacEventManager.hpp
-        include/Socket/Events/EventHandler.hpp
-        include/Socket/SocketOptionsBuilder.hpp
-        include/Socket/Server.hpp)
+        include/Socket/Client.hpp
+        include/Socket/TlsDecorator.hpp)
 
 set(Sources
-        include/Socket/NetUtils.hpp
-        src/NetUtils.cpp
-        include/Socket/Channels/SecureChannel.hpp
-        src/Channels/NormalChannel.cpp
-        src/Channels/SecureChannel.cpp
-        include/Socket/Channels/NormalChannel.hpp
-        src/Server.cpp)
+        src/Client.cpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -32,9 +22,9 @@ if(APPLE)
     list(APPEND Sources
             src/Events/MacEventManager.cpp)
 elseif(UNIX)
-    list(APPEND Sources
-            src/Events/LinuxEventManager.cpp
-            src/Events/LinuxEventHandler.cpp)
+    # list(APPEND Sources
+    #         src/Events/LinuxEventManager.cpp
+    #         src/Events/LinuxEventHandler.cpp)
 elseif(MSVC)
 
 endif()

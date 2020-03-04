@@ -93,6 +93,7 @@ if(ParentDirectory STREQUAL "")
     add_subdirectory(Console)
     add_subdirectory(Abstractions)
     add_subdirectory(SocketServer)
+    add_subdirectory(SocketClient)
     add_subdirectory(HttpServer)
 
 endif(ParentDirectory STREQUAL "")
