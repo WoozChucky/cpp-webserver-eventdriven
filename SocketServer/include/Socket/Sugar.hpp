@@ -149,6 +149,15 @@ typedef struct Socket {
      */
     BlockingMode Mode;
 
+    Socket& operator =(const Socket& s) {
+        this->Address = s.Address;
+        this->Type = s.Type;
+        this->Port = s.Port;
+        this->Mode = s.Mode;
+        this->Handle = s.Handle;
+        return *this;
+    }
+
 } Socket;
 
 /**

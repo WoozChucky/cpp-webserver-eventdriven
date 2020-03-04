@@ -75,11 +75,20 @@ SecureChannel::SecureChannel(const std::string& certificatePath, const std::stri
         TRACE("%s", e.what());
         throw;
     }
+
+    this->prepare();
 }
 
 void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outContext) {
 
-    this->prepare();
+    //this->prepare();
+    outContext->TLS = nullptr;
+    outContext->Secure = false;
+    outContext->Socket.Address = "";
+    outContext->Socket.Handle = 0;
+    outContext->Socket.Mode = BlockingMode::Unknown;
+    outContext->Socket.Port = 0;
+    outContext->Socket.Type = IPType::Unsupported;
 
     // accept the client
     auto socket = accept(handle, nullptr, nullptr);
@@ -87,7 +96,9 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
         perror("accept evt()");
     }
 
-    fcntl(socket, F_SETFL, O_NONBLOCK); // Mark socket as non blocking
+    auto flags = fcntl(socket, F_GETFL, 0);
+    flags |= O_NONBLOCK;
+    fcntl(socket, F_SETFL, flags); // Mark socket as non blocking
 
     if (tls_accept_socket(_serverTls, &outContext->TLS, socket) != 0) {
         TRACE("%s: %s", "tls_accept_socket error", tls_error(_serverTls));
@@ -101,8 +112,6 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
 }
 
 void SecureChannel::DisposeConnection(SocketContext* ctx) {
-
-    // std::lock_guard<std::mutex> lock{_mutex};
 
     auto ret = tls_close(ctx->TLS);
 
