@@ -6,7 +6,6 @@
 
 #include <Abstractions/Logger.hpp>
 #include <Socket/Sugar.hpp>
-#include <Socket/Events/EventHandler.hpp>
 #include <Socket/Channels/SecureChannel.hpp>
 #include <Socket/Channels/NormalChannel.hpp>
 

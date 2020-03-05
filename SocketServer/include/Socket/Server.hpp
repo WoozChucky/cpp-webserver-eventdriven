@@ -8,8 +8,9 @@
 #include <Abstractions/MemoryPool.hpp>
 #include <Socket/Sugar.hpp>
 #include <Socket/Channels/IChannel.hpp>
-#include <Socket/Events/MacEventManager.hpp>
-#include <Socket/Events/EventHandler.hpp>
+#include <Events/EventManager.hpp>
+#include <Events/EventHandler.hpp>
+
 
 class Server {
 

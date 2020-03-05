@@ -1,11 +1,8 @@
 //
-// Created by Nuno Levezinho Silva on 30/09/2019.
+// Created by nunol on 04/03/2020.
 //
 
-#include <Socket/Events/MacEventManager.hpp>
-
-#include <cstdio>
-#include <sys/epoll.h>
+#include <Events/EventManager.hpp>
 #include <Abstractions/Logger.hpp>
 
 EventManager::EventManager() {
@@ -49,4 +46,3 @@ int EventManager::GetFiredNotifications(Event *eventList, int maxEvents) {
 EventHandle EventManager::GetHandle() {
     return this->handle;
 }
-

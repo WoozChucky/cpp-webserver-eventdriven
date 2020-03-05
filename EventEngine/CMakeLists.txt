@@ -3,30 +3,31 @@
 # © 2019 by Nuno Silva
 
 cmake_minimum_required(VERSION 3.13)
-set(This SocketServer)
+set(This EventEngine)
 
 set(Headers
-        include/Socket/Sugar.hpp
-        include/Socket/NetUtils.hpp
-        include/Socket/Channels/IChannel.hpp
-        include/Socket/Channels/SecureChannel.hpp
-        include/Socket/Channels/NormalChannel.hpp
-        include/Socket/SocketOptionsBuilder.hpp
-        include/Socket/Server.hpp)
+        include/Events/EventHandler.hpp
+        include/Events/EventManager.hpp)
 
-set(Sources
-        src/NetUtils.cpp
-        src/Channels/NormalChannel.cpp
-        src/Channels/SecureChannel.cpp
-        src/Server.cpp)
+set(Sources )
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(${LIBRESSL_INCLUDE_DIR})
 
-if(MSVC)
+if(APPLE)
+    list(APPEND Sources
+            src/MacOS/MacEventManager.cpp)
+elseif(UNIX)
+    list(APPEND Sources
+            src/Linux/EventManager.cpp
+            src/Linux/EventHandler.cpp)
+elseif(MSVC)
+    list(APPEND Sources
+            src/Win/EventManager.cpp
+            src/Win/EventHandler.cpp)
+
     add_definitions(
             -DUNICODE -D_UNICODE
             -D_CRT_SECURE_NO_WARNINGS
@@ -52,6 +53,6 @@ if(UNIX)
             )
 endif(UNIX)
 
-target_link_libraries(${This} LibreSSL::TLS Abstractions EventEngine)
+target_link_libraries(${This} Abstractions)
 
 # add_subdirectory(test)

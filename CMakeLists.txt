@@ -89,9 +89,23 @@ if(ParentDirectory STREQUAL "")
             FOLDER Libraries
             )
 
+    # LibreSSL
+    set(LIBRESSL_SKIP_INSTALL ON CACHE BOOL "Skip installation" FORCE)
+    set(LIBRESSL_APPS OFF CACHE BOOL "Build apps" FORCE)
+    set(LIBRESSL_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(ENABLE_NC OFF CACHE BOOL "Enable installing TLS-enabled nc(1)" FORCE)
+    set(LIBRESSL_UNINSTALL OFF CACHE BOOL "Define uninstall target" FORCE)
+    add_subdirectory(LibreSSL)
+    set_target_properties(tls ssl crypto PROPERTIES
+            FOLDER Libraries/LibreSSL
+            )
+
+
     # All other libraries can be pulled in without further configuration.
-    add_subdirectory(Console)
+    add_subdirectory(Samples/WebServer)
+    add_subdirectory(Samples/WebClient)
     add_subdirectory(Abstractions)
+    add_subdirectory(EventEngine)
     add_subdirectory(SocketServer)
     add_subdirectory(SocketClient)
     add_subdirectory(HttpServer)

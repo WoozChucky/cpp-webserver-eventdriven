@@ -2,8 +2,8 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#ifndef MACEVENTMANAGER_HPP
-#define MACEVENTMANAGER_HPP
+#ifndef EVENTMANAGER_HPP
+#define EVENTMANAGER_HPP
 
 #include <Socket/Sugar.hpp>
 
@@ -24,4 +24,4 @@ private:
 
 };
 
-#endif //MACEVENTMANAGER_HPP
+#endif //EVENTMANAGER_HPP

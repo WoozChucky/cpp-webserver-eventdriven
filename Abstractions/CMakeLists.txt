@@ -8,11 +8,16 @@ set(This Abstractions)
 set(Headers
         include/Abstractions/MemoryPool.hpp
         include/Abstractions/File.hpp
-        include/Abstractions/Logger.hpp include/Abstractions/DynamicLibrary.hpp)
+        include/Abstractions/Logger.hpp
+        include/Abstractions/DynamicLibrary.hpp
+        include/Abstractions/Types.hpp
+        include/Abstractions/ThreadPool.hpp)
 
 set(Sources
         src/MemoryPool.cpp
-        src/File.cpp src/DynamicLibrary.cpp src/DynamicLibraryImpl.hpp)
+        src/File.cpp
+        src/DynamicLibrary.cpp
+        src/DynamicLibraryImpl.hpp)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -41,6 +46,6 @@ if(UNIX)
             )
 endif(UNIX)
 
-target_link_libraries(${This})
+target_link_libraries(${This} tls)
 
 # add_subdirectory(test)

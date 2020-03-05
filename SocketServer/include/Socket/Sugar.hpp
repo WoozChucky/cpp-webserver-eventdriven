@@ -10,23 +10,8 @@
 #include <vector>
 #include <functional>
 
-using U8    = uint8_t;
-using U16   = uint16_t;
-using U32   = uint32_t;
-using U64   = uint64_t;
+#include <Abstractions/Types.hpp>
 
-using S8    = int8_t;
-using S16   = int16_t;
-using S32   = int32_t;
-using S64   = int64_t;
-
-using R32 = float;
-using R64 = double;
-
-using Memory = void*;
-
-using SocketHandle      = S32;
-using EventHandle       = S32;
 using SocketAddress     = struct sockaddr;
 using SocketAddressIn   = struct sockaddr_in;
 using SocketAddressIn6  = struct sockaddr_in6;
@@ -42,39 +27,6 @@ using TLSConfig         = struct tls_config;
 using Event             = struct epoll_event;
 #endif
 
-#if MACOS
-using Event             = struct kevent;
-#endif
-
-#if WINDOWS
-
-#endif
-
-enum EventType : S16 {
-    Read        = (-1),
-    Write       = (-2),
-    Disconnect  = (-3),
-    Weird       = (-10)
-};
-
-enum EventAction {
-    Add = 0x0001,
-    Delete = 0x0002,
-    Enable = 0x0004,
-    Disable = 0x0008
-};
-
-enum IPType {
-    Unsupported = 0x00,
-    IPv4 = 0x04,
-    IPv6 = 0x08
-};
-
-enum BlockingMode {
-    Unknown = 0x00,
-    Blocking = 0x04,
-    NonBlocking = 0x08
-};
 
 /**
  * @brief The SocketServer configuration to be passed on initialization.
@@ -119,73 +71,7 @@ typedef struct ServerConfiguration {
 
 } ServerConfiguration ;
 
-/**
- * @brief The Socket representation used in the Channel Layer.
- */
-typedef struct Socket {
-    /**
-     * @brief The os-specific internal handle for the socket.
-     */
-    SocketHandle Handle;
 
-    /**
-     * @brief The port when the socket is connecting/listening from.
-     *
-     */
-    U16 Port;
-
-    /**
-     * @brief The internet protocol address in a human-readable format.
-     */
-    std::string Address;
-
-    /**
-     * @brief Specifies the protocol used (IPv4 or IPv6).
-     */
-    IPType Type;
-
-    /**
-     * @brief Specifies the socket blocking mode.
-     */
-    BlockingMode Mode;
-
-    Socket& operator =(const Socket& s) {
-        this->Address = s.Address;
-        this->Type = s.Type;
-        this->Port = s.Port;
-        this->Mode = s.Mode;
-        this->Handle = s.Handle;
-        return *this;
-    }
-
-} Socket;
-
-/**
- * @brief The context passed within the TCP SocketServer layer
- */
-typedef struct SocketContext {
-
-    /**
-     * @brief The socket object
-     */
-    struct Socket Socket {0, 0, nullptr, IPType::Unsupported, BlockingMode::Unknown };
-
-    /**
-     * @brief The tls context
-     */
-     struct tls* TLS{nullptr};
-
-    /**-
-     * @brief Flag indicating is this context is secure
-     */
-    bool Secure = false;
-
-} SocketContext;
-
-typedef struct HandledEvent {
-    SocketContext* Context;
-    EventType Type;
-} HandledEvent;
 
 using OnMessageDelegate = std::function<void(SocketContext* ctx, std::string& message)>;
 using OnClientDelegate =  std::function<void(SocketContext* ctx)>;

@@ -1,13 +1,11 @@
-# CMakeLists.txt for Console
+# CMakeLists.txt for WebClient
 #
 # © 2019 by Nuno Silva
 
 cmake_minimum_required(VERSION 3.13)
-set(This Console)
+set(This WebClient)
 
-set(Headers
-        # include/Console/exports.h
-        )
+set(Headers )
 
 set(Sources
         src/main.cpp)
@@ -43,5 +41,3 @@ if(UNIX)
 endif(UNIX)
 
 target_link_libraries(${This} Abstractions SocketServer HttpServer LibreSSL::TLS)
-
-# add_subdirectory(test)

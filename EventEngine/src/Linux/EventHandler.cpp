@@ -1,12 +1,11 @@
 //
-// Created by nunol on 26/02/2020.
+// Created by nunol on 04/03/2020.
 //
 
-#include <Socket/Events/EventHandler.hpp>
-#include <sys/epoll.h>
+#include <Events/EventHandler.hpp>
 
-EventHandler::EventHandler(EventHandle serverHandle) : _serverHandle(serverHandle) {
-
+EventHandler::EventHandler(EventHandle serverHandle) {
+    this->_serverHandle = serverHandle;
 }
 
 HandledEvent EventHandler::DigestEvent(Event event) {
@@ -41,5 +40,6 @@ HandledEvent EventHandler::DigestEvent(Event event) {
     }
 
     return evt;
-
 }
+
+
