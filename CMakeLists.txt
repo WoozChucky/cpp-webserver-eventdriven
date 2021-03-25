@@ -9,7 +9,7 @@ project(${This} C CXX)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -fconcepts-ts")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 enable_testing()
 
@@ -43,13 +43,25 @@ if(ParentDirectory STREQUAL "")
 
     # Keep Google Test's linkage of the runtime in sync with our own
     if (RUNTIME_STATIC_LINKAGE)
-        set(gtest_force_shared_crt OFF CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as a statsic lib." FORCE)
+        set(gtest_force_shared_crt OFF CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as a static lib." FORCE)
     else(RUNTIME_STATIC_LINKAGE)
-        set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as a statsic lib." FORCE)
+        set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as a static lib." FORCE)
     endif(RUNTIME_STATIC_LINKAGE)
 
     # Organize application, libraries, etc. in folder in the IDE.
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+    # Set common output directory for all targets
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+    # Options
+    option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" OFF)
+    if(DEBUG_ENABLED)
+        message(DEBUG: ${DEBUG_ENABLED})
+        add_definitions(-DDEBUG_ENABLED)
+    endif()
 
     # Ensure proper loading of side-loaded shared libraries
     set(CMAKE_MACOSX_RPATH 1)
@@ -78,9 +90,6 @@ if(ParentDirectory STREQUAL "")
         add_definitions(-DWINDOWS)
     endif()
 
-    # Enable TRACE calls.
-    add_definitions(-DDEBUG_ENABLED)
-
     # Google Test
     set(BUILD_GTEST ON CACHE BOOL "Builds the googletest subproject" FORCE)
     set(BUILD_GMOCK ON CACHE BOOL "Builds the googlemock subproject" FORCE)
@@ -90,25 +99,25 @@ if(ParentDirectory STREQUAL "")
             )
 
     # LibreSSL
-    set(LIBRESSL_SKIP_INSTALL ON CACHE BOOL "Skip installation" FORCE)
-    set(LIBRESSL_APPS OFF CACHE BOOL "Build apps" FORCE)
-    set(LIBRESSL_TESTS OFF CACHE BOOL "Build tests" FORCE)
-    set(ENABLE_NC OFF CACHE BOOL "Enable installing TLS-enabled nc(1)" FORCE)
-    set(LIBRESSL_UNINSTALL OFF CACHE BOOL "Define uninstall target" FORCE)
-    add_subdirectory(LibreSSL)
-    set_target_properties(tls ssl crypto PROPERTIES
-            FOLDER Libraries/LibreSSL
-            )
+    include(FindPkgConfig) # <-- include pkg-config needed by FindLibreSSL.cmake script
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake") # <-- use FindLibreSSL.cmake in /cmake folder
 
+    set(LIBRESSL_APPS OFF)
+    set(LIBRESSL_TESTS OFF)
+    set(BUILD_SHARED_LIBS OFF)
 
-    # All other libraries can be pulled in without further configuration.
-    add_subdirectory(Samples/WebServer)
-    add_subdirectory(Samples/WebClient)
+    find_package(LibreSSL 3.0.0 REQUIRED)
+
+    # All other modules can be pulled in without further configuration.
     add_subdirectory(Abstractions)
     add_subdirectory(EventEngine)
     add_subdirectory(SocketServer)
     add_subdirectory(SocketClient)
     add_subdirectory(HttpServer)
+
+    # Sample modules to aid development workflow
+    add_subdirectory(Samples/WebServer)
+    add_subdirectory(Samples/WebClient)
 
 endif(ParentDirectory STREQUAL "")
 

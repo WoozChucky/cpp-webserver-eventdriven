@@ -26,13 +26,35 @@ The non-blocking tcp server can be implemented as follows:
  */
 
 #include <Http/HttpServer.hpp>
-#include <Abstractions/Logger.hpp>
 #include <Socket/SocketOptionsBuilder.hpp>
+
+void HandleBaseRoute(HttpRequest* request, HttpResponse* response) {
+    // do stuff
+    TRACE("%s", request->GetHeader("Content-Length").data());
+    TRACE("%s", request->GetBody().data());
+
+    response->SetStatusCode(HttpStatusCode::OK);
+    response->SetProtocol(HttpProtocol::V1_1);
+    response->SetBody("{\"obj\": true}");
+    response->AddHeader(HttpHeader("Connection", "Keep-Alive"));
+    response->AddHeader(HttpHeader("Content-Type", "application/json"));
+
+    std::string responseString =   "HTTP/1.1 200 OK\r\n"
+                                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+                                   "Connection: Keep-Alive\r\n"
+                                   "Content-Type: text/html\r\n"
+                                   "Content-Length: 13\r\n"
+                                   "\r\n"
+                                   "{\"obj\": true}";
+}
+
+void HandleRegisterRoute(HttpRequest* request, HttpResponse* response) {
+    // do stuff
+}
 
 int main(int argc, char **argv) {
 
-    auto builder = new SocketOptionBuilder();
-    auto options = builder
+    auto options = (new SocketOptionBuilder())
             ->WithReuseAddress()
             ->WithReusePort()
             ->WithKeepAlive()
@@ -45,32 +67,9 @@ int main(int argc, char **argv) {
 
     auto http = new HttpServer(options);
 
-    http->Handle("/",
-            [](HttpRequest* request, HttpResponse* response) -> void {
-        // do stuff
-        TRACE("%s", request->GetHeader("Content-Length").data());
-        TRACE("%s", request->GetBody().data());
+    http->Handle("/", HandleBaseRoute);
 
-        response->SetStatusCode(HttpStatusCode::OK);
-        response->SetProtocol(HttpProtocol::V1_1);
-        response->SetBody("{\"obj\": true}");
-        response->AddHeader(HttpHeader("Connection", "Keep-Alive"));
-        response->AddHeader(HttpHeader("Content-Type", "application/json"));
-
-        std::string responseString =   "HTTP/1.1 200 OK\r\n"
-                           "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                           "Connection: Keep-Alive\r\n"
-                           "Content-Type: text/html\r\n"
-                           "Content-Length: 13\r\n"
-                           "\r\n"
-                           "{\"obj\": true}";
-    });
-
-    http->Handle("/register",
-            HttpMethod::POST,
-            [](HttpRequest* request, HttpResponse* response) -> void {
-        // do stuff
-    });
+    http->Handle("/register",HttpMethod::POST, HandleRegisterRoute);
 
     try {
         http->Boot();

@@ -24,7 +24,7 @@ public:
     void Unload();
 
     void* GetProcedure(const std::string& name);
-    std::string GetLastError();
+    static std::string GetLastError();
 
 private:
     std::unique_ptr< struct DynamicLibraryImpl > _impl;

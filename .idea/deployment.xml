@@ -2,7 +2,14 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="WSL Ubuntu (d065be4b-e096-4940-b476-7a6d52a820da)">
+      <paths name="WSL - CLang (b32ad2e1-0312-4dac-9bcb-8bdc3df47f0e)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="WSL - GCC (d065be4b-e096-4940-b476-7a6d52a820da)">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

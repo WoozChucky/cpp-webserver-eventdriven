@@ -6,15 +6,15 @@
 
 #include <tls.h>
 #include <openssl/bio.h>
-#include <openssl/pem.h>
 
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/socket.h>
 #include <Abstractions/File.hpp>
-#include <Abstractions/Logger.hpp>
+#include <Abstractions/Directory.hpp>
+#include <Abstractions/Format.hpp>
 #include <Socket/NetUtils.hpp>
 #include <cstring>
+
 
 void SecureChannel::prepare() {
 
@@ -168,7 +168,13 @@ size_t SecureChannel::Write(SocketContext* ctx, Memory data, size_t dataLength) 
 void SecureChannel::LoadPrivateKey(const char *filename) {
 
     if (!File::Exists(filename)) {
-        throw std::runtime_error("Failed to find file with PrivateKey.");
+        throw std::runtime_error(
+                Format::This(
+                        "Failed to find file(%s) with PrivateKey in directory - %s",
+                        filename,
+                        Directory::CurrentWorkingDirectory().c_str()
+                        )
+                );
     }
 
     this->key = File::ReadAllBytes(filename);
@@ -180,7 +186,13 @@ void SecureChannel::LoadPrivateKey(const char *filename) {
 void SecureChannel::LoadPublicKey(const char *filename) {
 
     if (!File::Exists(filename)) {
-        throw std::runtime_error("Failed to find file with PublicKey.");
+        throw std::runtime_error(
+                Format::This(
+                        "Failed to find file(%s) with PublicKey in directory - %s",
+                        filename,
+                        Directory::CurrentWorkingDirectory().c_str()
+                )
+        );
     }
 
     this->pub = File::ReadAllBytes(filename);

@@ -11,17 +11,17 @@ set(Headers
         include/Abstractions/Logger.hpp
         include/Abstractions/DynamicLibrary.hpp
         include/Abstractions/Types.hpp
-        include/Abstractions/ThreadPool.hpp)
+        include/Abstractions/ThreadPool.hpp
+        include/Abstractions/Format.hpp
+        include/Abstractions/Directory.hpp)
 
 set(Sources
         src/MemoryPool.cpp
         src/File.cpp
         src/DynamicLibrary.cpp
-        src/DynamicLibraryImpl.hpp)
+        src/DynamicLibraryImpl.hpp
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+        src/Linux/Directory.cpp)
 
 if(MSVC)
     add_definitions(

@@ -21,10 +21,6 @@ set(Headers
 set(Sources
         src/HttpServer.cpp src/HttpParser.cpp src/HttpHeader.cpp src/HttpRouter.cpp src/HttpRequest.cpp src/HttpResponse.cpp)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 if(MSVC)
     add_definitions(
             -DUNICODE -D_UNICODE
