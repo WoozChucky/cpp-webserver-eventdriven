@@ -18,6 +18,8 @@ The code is a tentative to implement one approach mentioned in this [article](ht
 
 [![CodeQL](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/codeql-analysis.yml/badge.svg?branch=develop)](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/codeql-analysis.yml)
 
+[![Coverity](https://scan.coverity.com/projects/22856/badge.svg)](https://scan.coverity.com/projects/woozchucky-cpp-webserver-eventdriven)
+
 ### Modules
 
 Very conceptual diagram of the project architecture
