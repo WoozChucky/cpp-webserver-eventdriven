@@ -16,11 +16,12 @@ class Server {
 
 public:
 
-    Server();
+    explicit Server();
     explicit Server(ServerConfiguration* configuration);
 
     void Setup();
     void Boot();
+    void Terminate();
     void SetConfiguration(ServerConfiguration* configuration);
     void SetEventManager(EventManager* eventManager);
 
@@ -44,7 +45,7 @@ private:
 
     SocketHandle GetHandle() const;
     bool SetSocketOption(int option) const;
-    bool GetSocketOption(int option) const;
+    U16 GetSocketOption(int option) const;
     void HandleConnections();
 
     void HandleNewConnectionEvent();

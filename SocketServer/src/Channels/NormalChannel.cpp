@@ -43,3 +43,7 @@ size_t NormalChannel::Write(SocketContext* ctx, Buffer* buffer) {
     //TODO(Levezinho): Implement this
     return 0;
 }
+
+void NormalChannel::Terminate() {
+    //TODO(Levezinho): Implement this
+}

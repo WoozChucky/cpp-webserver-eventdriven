@@ -18,6 +18,7 @@ public:
     void DisposeConnection(SocketContext* ctx) override;
     std::string Read(SocketContext *ctx) override;
     size_t Write(SocketContext* ctx, Buffer* buffer) override;
+    void Terminate() override;
 
 private:
     TLS* _serverTls{};

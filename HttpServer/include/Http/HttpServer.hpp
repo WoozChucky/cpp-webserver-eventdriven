@@ -20,6 +20,7 @@ public:
     explicit HttpServer(ServerConfiguration* configuration);
 
     void Boot();
+    void Terminate(bool waitForWorkers = false, U32 waitTimeout = 0);
 
     void Handle(const std::string& path, const HttpHandler& handler) const;
     void Handle(const std::string& path, HttpMethod method, HttpHandler handler) const;

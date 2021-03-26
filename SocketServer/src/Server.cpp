@@ -16,7 +16,6 @@
 #include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
-#include <thread>
 #endif
 
 #include <Abstractions/Format.hpp>
@@ -36,11 +35,6 @@ Server::Server(ServerConfiguration* configuration)
     assert(configuration != nullptr);
 }
 
-void Server::SetConfiguration(ServerConfiguration *configuration) {
-    assert(configuration != nullptr);
-    this->_configuration = configuration;
-}
-
 void Server::Setup() {
     assert(this->_configuration != nullptr);
 
@@ -58,8 +52,10 @@ void Server::Setup() {
     }
 
     if (this->_configuration->SSLEnabled) {
-        this->channel = new SecureChannel(this->_configuration->SSLCertificatePath,
-                                          this->_configuration->SSLPrivateKeyPath);
+        this->channel = new SecureChannel(
+                this->_configuration->SSLCertificatePath,
+                this->_configuration->SSLPrivateKeyPath
+            );
     } else {
         this->channel = new NormalChannel();
     }
@@ -92,7 +88,7 @@ void Server::Boot() {
 
     this->running = true;
 
-    auto* tpool = new ThreadPool(32);
+    auto* tpool = new ThreadPool(2);
 
     tpool->enqueue([this]() -> void {
         // this->HandleConnections();
@@ -101,6 +97,62 @@ void Server::Boot() {
     TRACE("12 %s", ".");
 
     this->HandleConnections();
+}
+
+void Server::Terminate() {
+
+    // stop the main event loop
+    this->running = false;
+
+    // unregister server socket from read notifications
+    this->manager->RegisterEvent(this->GetHandle(), EventType::Read, EventAction::Delete);
+
+    // close the transport channel
+    this->GetChannel()->Terminate();
+
+    // close the server file descriptor
+    close(this->GetHandle());
+}
+
+void Server::SetConfiguration(ServerConfiguration *configuration) {
+    assert(configuration != nullptr);
+    this->_configuration = configuration;
+}
+
+void Server::SetEventManager(EventManager *eventManager) {
+    this->manager = eventManager;
+}
+
+void Server::OnMessage(OnMessageDelegate delegate) {
+    this->messageDelegate = std::move(delegate);
+}
+
+void Server::OnClientConnected(OnClientDelegate delegate) {
+    this->clientConnectedDelegate = std::move(delegate);
+}
+
+void Server::OnClientDisconnected(OnClientDelegate delegate) {
+    this->clientDisconnectedDelegate = std::move(delegate);
+}
+
+void Server::HandleDisconnectionEvent(SocketContext *ctx) {
+
+    // Register the disconnection event
+    this->manager->RegisterEvent(ctx->Socket.Handle, EventType::Read, EventAction::Delete);
+
+    this->channel->DisposeConnection(ctx);
+
+    this->clientDisconnectedDelegate(ctx);
+
+    this->connectionsMemPool->Release(ctx);
+}
+
+IChannel * Server::GetChannel() {
+    return this->channel;
+}
+
+SocketHandle Server::GetHandle() const {
+    return this->serverSocket;
 }
 
 bool Server::SetSocketOption(int option) const {
@@ -117,7 +169,7 @@ bool Server::SetSocketOption(int option) const {
     return optval;
 }
 
-bool Server::GetSocketOption(int option) const {
+U16 Server::GetSocketOption(int option) const {
 
     int optval = 1;
     socklen_t  optlen = sizeof(optval);
@@ -130,14 +182,6 @@ bool Server::GetSocketOption(int option) const {
     }
 
     return optval;
-}
-
-SocketHandle Server::GetHandle() const {
-    return this->serverSocket;
-}
-
-void Server::SetEventManager(EventManager *eventManager) {
-    this->manager = eventManager;
 }
 
 void Server::HandleConnections() {
@@ -196,29 +240,6 @@ void Server::HandleConnections() {
     free(evtList);
 }
 
-void Server::HandleDisconnectionEvent(SocketContext *ctx) {
-
-    // Register the disconnection event
-    this->manager->RegisterEvent(ctx->Socket.Handle, EventType::Read, EventAction::Delete);
-
-    this->channel->DisposeConnection(ctx);
-
-    this->clientDisconnectedDelegate(ctx);
-
-    this->connectionsMemPool->Release(ctx);
-}
-
-void Server::OnMessage(OnMessageDelegate delegate) {
-    this->messageDelegate = std::move(delegate);
-}
-void Server::OnClientConnected(OnClientDelegate delegate) {
-    this->clientConnectedDelegate = std::move(delegate);
-}
-
-void Server::OnClientDisconnected(OnClientDelegate delegate) {
-    this->clientDisconnectedDelegate = std::move(delegate);
-}
-
 void Server::HandleNewConnectionEvent() {
 
     // accept the client
@@ -255,8 +276,4 @@ void Server::HandleMessageEvent(SocketContext *ctx) {
         TRACE("%s", "Received a message, but no bytes could be read.");
     }
 
-}
-
-IChannel * Server::GetChannel() {
-    return this->channel;
 }

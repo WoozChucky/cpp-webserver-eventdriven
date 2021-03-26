@@ -169,6 +169,22 @@ size_t SecureChannel::Write(SocketContext* ctx, Buffer* buffer) {
     return sentBytes;
 }
 
+void SecureChannel::Terminate() {
+
+    auto ret = tls_close(this->_serverTls);
+
+    if (ret < 0) {
+        TRACE("%s: %s", "tls_close error", tls_error(this->_serverTls));
+    }
+
+    tls_free(this->_serverTls);
+
+    tls_config_free(this->_tlsConfig);
+
+    this->_serverTls = nullptr;
+    this->_tlsConfig = nullptr;
+}
+
 void SecureChannel::LoadPrivateKey(const char *filename) {
 
     if (!File::Exists(filename)) {
