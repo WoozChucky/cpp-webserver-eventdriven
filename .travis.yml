@@ -1,0 +1,16 @@
+#travis configuration for coverage testing
+language: cpp
+
+sudo: true # only for faster builds
+
+# Compiler selection
+compiler:
+  - clang
+  - gcc
+
+
+# Build steps
+script: 
+  - cd ${TRAVIS_BUILD_DIR}
+  - sh build-libressl.sh && sh build.sh
+  
