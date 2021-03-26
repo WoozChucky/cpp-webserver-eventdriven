@@ -1,6 +1,9 @@
 name: Linux x64
 
 on: 
+  pull_request:
+    branches:
+    - develop
   push:
     branches:
     - develop
@@ -8,8 +11,10 @@ on:
 jobs:
 
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.3.4
+    - name: install libressl
+      run: sh build-libressl
     - name: build
       run: sh build.sh
