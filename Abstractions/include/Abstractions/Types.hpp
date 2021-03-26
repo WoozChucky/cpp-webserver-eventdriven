@@ -107,7 +107,7 @@ typedef struct SocketContext {
     /**
      * @brief The socket object
      */
-    Socket Socket {0, 0, /*""*/ IPType::Unsupported, BlockingMode::Unknown };
+    struct Socket Socket {0, 0, /*""*/ IPType::Unsupported, BlockingMode::Unknown };
 
     /**
      * @brief The tls context
