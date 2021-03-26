@@ -38,14 +38,6 @@ void HandleBaseRoute(HttpRequest* request, HttpResponse* response) {
     response->SetBody("{\"obj\": true}");
     response->AddHeader(HttpHeader("Connection", "Keep-Alive"));
     response->AddHeader(HttpHeader("Content-Type", "application/json"));
-
-    std::string responseString =   "HTTP/1.1 200 OK\r\n"
-                                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                                   "Connection: Keep-Alive\r\n"
-                                   "Content-Type: text/html\r\n"
-                                   "Content-Length: 13\r\n"
-                                   "\r\n"
-                                   "{\"obj\": true}";
 }
 
 void HandleRegisterRoute(HttpRequest* request, HttpResponse* response) {
@@ -71,7 +63,12 @@ int main(int argc, char **argv) {
 
     http->Handle("/register",HttpMethod::POST, HandleRegisterRoute);
 
+    auto pool = new ThreadPool(1);
+
     try {
+        pool->enqueue([http]() -> void {
+            //http->Boot();
+        });
         http->Boot();
     } catch (std::exception& e) {
         TRACE("%s", e.what());

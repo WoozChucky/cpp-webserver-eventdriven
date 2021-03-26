@@ -5,6 +5,7 @@
 #ifndef HTTPSERVER_HPP
 #define HTTPSERVER_HPP
 
+#include <Abstractions/ConcurrentHashMap.hpp>
 #include <Socket/Server.hpp>
 #include <Http/HttpRequest.hpp>
 #include <Http/HttpResponse.hpp>
@@ -31,6 +32,9 @@ private:
     HttpRouter*  _router;
     HttpParser* _parser;
     ServerConfiguration* _configuration;
+
+    ConcurrentHashMap<U32, SocketContext*>* _connections;
+    SocketContext* _lastConnection;
 
     [[nodiscard]] HttpRouter* GetRouter() const;
     [[nodiscard]] HttpParser* GetParser() const;

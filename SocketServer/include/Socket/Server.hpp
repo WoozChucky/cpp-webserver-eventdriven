@@ -10,6 +10,7 @@
 #include <Socket/Channels/IChannel.hpp>
 #include <Events/EventManager.hpp>
 #include <Events/EventHandler.hpp>
+#include <Abstractions/ThreadPool.hpp>
 
 
 class Server {
@@ -32,6 +33,8 @@ public:
     void HandleDisconnectionEvent(SocketContext *handle);
     IChannel * GetChannel();
 
+    SocketHandle GetHandle() const;
+
 private:
     SocketAddressIn serverAddress;
     SocketHandle serverSocket;
@@ -39,11 +42,11 @@ private:
     EventHandler* handler;
     IChannel* channel;
     MemoryPool* connectionsMemPool;
+    ThreadPool* threadPool;
     bool running;
 
     ServerConfiguration* _configuration;
 
-    SocketHandle GetHandle() const;
     bool SetSocketOption(int option) const;
     U16 GetSocketOption(int option) const;
     void HandleConnections();

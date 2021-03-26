@@ -8,6 +8,7 @@
 #include <Http/Exceptions/HttpException.hpp>
 #include <Http/Exceptions/NotFoundException.hpp>
 #include <Abstractions/Format.hpp>
+#include <Abstractions/Timer.hpp>
 
 HttpServer::HttpServer() {
     this->_server = nullptr;
@@ -15,6 +16,7 @@ HttpServer::HttpServer() {
     this->_router = new HttpRouter();
     this->_parser = new HttpParser(HttpProtocol::V1_1);
     this->_configuration = nullptr;
+    this->_connections = new ConcurrentHashMap<U32, SocketContext*>();
 }
 
 HttpServer::HttpServer(ServerConfiguration *configuration) {
@@ -23,6 +25,7 @@ HttpServer::HttpServer(ServerConfiguration *configuration) {
     this->_router = new HttpRouter();
     this->_parser = new HttpParser(HttpProtocol::V1_1);
     this->_configuration = configuration;
+    this->_connections = new ConcurrentHashMap<U32, SocketContext*>();
 }
 
 void HttpServer::Boot() {
@@ -39,7 +42,7 @@ void HttpServer::Boot() {
                 ->WithServerPort(443)
                 ->WithSSL(true)
                 ->WithCertificate("cert.pem")
-                ->WithPrivateKey("key.pem")
+                ->WithPrivateKey("_key.pem")
                 ->Build();
     }
 
@@ -65,6 +68,22 @@ void HttpServer::Boot() {
 
     // Boot the Socket Server
     this->GetTransport()->Boot();
+}
+
+void HttpServer::Terminate(bool waitForWorkers, U32 waitTimeout) {
+
+    //TODO(Levezinho): Implement Status for SocketContext/HttpContext so we actually know how to wait for workers
+    // and if we can safely ignore them and just abruptly close the connections.
+
+    for (U32 index = this->_lastConnection->Socket.Handle; index > this->GetTransport()->GetHandle(); --index) {
+
+        SocketContext* currentConnection = nullptr;
+
+        if (this->_connections->Find(index, currentConnection)) {
+            this->GetTransport()->HandleDisconnectionEvent(currentConnection);
+        }
+
+    }
 }
 
 void HttpServer::Handle(const std::string& path, const HttpHandler& handler) const
@@ -98,6 +117,10 @@ Server *HttpServer::GetTransport() const
 }
 
 void HttpServer::OnClientConnected(SocketContext* ctx) {
+
+    this->_lastConnection = ctx;
+    this->_connections->Insert(this->_lastConnection->Socket.Handle, this->_lastConnection);
+
     TRACE("[%d][%s:%d] - Connected.",
           ctx->Socket.Handle,
           "",
@@ -106,6 +129,9 @@ void HttpServer::OnClientConnected(SocketContext* ctx) {
 }
 
 void HttpServer::OnClientDisconnected(SocketContext* ctx) {
+
+    this->_connections->Erase(ctx->Socket.Handle);
+
     TRACE("[%d][%s:%d] - Disconnected",
           ctx->Socket.Handle,
           "",
@@ -115,7 +141,7 @@ void HttpServer::OnClientDisconnected(SocketContext* ctx) {
 
 void HttpServer::OnClientMessage(SocketContext *ctx, const std::string &messageBuffer) {
 
-    auto startTime = std::chrono::high_resolution_clock::now();
+    auto timer = new Timer(true);
 
     if (ctx->Socket.Handle > 0) {
         auto logMessage = Format::This(
@@ -162,12 +188,7 @@ void HttpServer::OnClientMessage(SocketContext *ctx, const std::string &messageB
 
     auto written = this->WriteResponse(ctx, response);
 
-    auto endTime = std::chrono::high_resolution_clock::now();
-
-    std::chrono::duration<double> duration = (endTime - startTime);
-    auto durationInMs = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
-
-    TRACE("Request took %ld ms", durationInMs.count())
+    TRACE("Request took %f ms", timer->Stop() * 0.001)
     TRACE("Written %d bytes as response.", written)
 
     if (request->GetHeader("Connection") == "close")

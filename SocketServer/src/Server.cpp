@@ -25,12 +25,14 @@
 Server::Server()
         : serverSocket(0), serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
           connectionsMemPool{new MemoryPool(sizeof(SocketContext), 3, 100)},
+          threadPool{new ThreadPool(1)},
           _configuration{nullptr}, running{false}
 { }
 
 Server::Server(ServerConfiguration* configuration)
         : serverSocket{0}, serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
           connectionsMemPool{new MemoryPool(sizeof(SocketContext), 3, 100)},
+          threadPool{new ThreadPool(1)},
           running{false}, _configuration{configuration}{
     assert(configuration != nullptr);
 }
@@ -88,13 +90,7 @@ void Server::Boot() {
 
     this->running = true;
 
-    auto* tpool = new ThreadPool(2);
-
-    tpool->enqueue([this]() -> void {
-        // this->HandleConnections();
-    });
-
-    TRACE("12 %s", ".");
+    TRACE("Running..%s", ".")
 
     this->HandleConnections();
 }
@@ -210,6 +206,10 @@ void Server::HandleConnections() {
                     case Read:
 
                         try {
+                            /*
+                            this->threadPool->enqueue([this, result]() -> void {
+                                //
+                            }); */
                             this->HandleMessageEvent(result.Context);
                         } catch (...) {
                             TRACE("%s", "Error HandleMessageEvent");

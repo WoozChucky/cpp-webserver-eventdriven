@@ -15,6 +15,7 @@ set(Headers
         include/Abstractions/Format.hpp
         include/Abstractions/Directory.hpp
         include/Abstractions/Timer.hpp
+        include/Abstractions/ConcurrentHashMap.hpp
         )
 
 set(Sources
