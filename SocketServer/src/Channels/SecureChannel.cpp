@@ -84,7 +84,7 @@ void SecureChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
     //this->prepare();
     outContext->TLS = nullptr;
     outContext->Secure = false;
-    outContext->Socket.Address = "";
+    // outContext->Socket.Address = "";
     outContext->Socket.Handle = 0;
     outContext->Socket.Mode = BlockingMode::Unknown;
     outContext->Socket.Port = 0;
@@ -122,13 +122,13 @@ void SecureChannel::DisposeConnection(SocketContext* ctx) {
     tls_free(ctx->TLS);
     close(ctx->Socket.Handle);
 
-    tls_close(this->_serverTls);
-    tls_free(this->_serverTls);
-    tls_config_free(this->_tlsConfig);
+    //tls_close(this->_serverTls);
+    //tls_free(this->_serverTls);
+    //tls_config_free(this->_tlsConfig);
 
     ctx->TLS = nullptr;
-    this->_serverTls = nullptr;
-    this->_tlsConfig = nullptr;
+    //this->_serverTls = nullptr;
+    //this->_tlsConfig = nullptr;
 }
 
 std::string SecureChannel::Read(SocketContext *ctx) {
@@ -159,10 +159,14 @@ std::string SecureChannel::Read(SocketContext *ctx) {
     return fullBufferedRequest;
 }
 
-size_t SecureChannel::Write(SocketContext* ctx, Memory data, size_t dataLength) {
+size_t SecureChannel::Write(SocketContext* ctx, Buffer* buffer) {
 
-    return tls_write(ctx->TLS, data, dataLength);
+    auto sentBytes = tls_write(ctx->TLS, buffer->Data, buffer->Size);
 
+    free(buffer->Data);
+    free(buffer);
+
+    return sentBytes;
 }
 
 void SecureChannel::LoadPrivateKey(const char *filename) {

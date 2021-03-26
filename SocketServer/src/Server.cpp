@@ -4,8 +4,6 @@
 
 #include <Socket/Server.hpp>
 
-#include <Abstractions/Logger.hpp>
-#include <Socket/Sugar.hpp>
 #include <Socket/Channels/SecureChannel.hpp>
 #include <Socket/Channels/NormalChannel.hpp>
 
@@ -18,22 +16,12 @@
 #include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
+#include <thread>
 #endif
 
-std::string FormatError(const char * format, ...) {
-
-    char buffer[256];
-
-    va_list args;
-
-    va_start(args, format);
-
-    vsprintf(buffer, format, args);
-
-    va_end(args);
-
-    return buffer;
-}
+#include <Abstractions/Format.hpp>
+#include <Abstractions/ThreadPool.hpp>
+#include <Abstractions/Timer.hpp>
 
 Server::Server()
         : serverSocket(0), serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
@@ -87,23 +75,35 @@ void Server::Boot() {
     if (bind(this->serverSocket, (struct sockaddr *)&this->serverAddress, sizeof(SocketAddress)) < 0) {
         TRACE("%s %s.", "Socket bind() failed.", strerror(errno));
         close(this->serverSocket);
-        throw std::runtime_error(FormatError("%s %s.", "Socket bind() failed.", strerror(errno)));
+        throw std::runtime_error(
+                    Format::This("Socket bind() failed. %s.", strerror(errno))
+                    );
     }
 
     if (listen(this->serverSocket, this->_configuration->MaxQueuedConnections) < 0) {
         TRACE("%s %s.", "Socket listen() failed.", strerror(errno));
         close(this->serverSocket);
-        throw std::runtime_error(FormatError("%s %s.", "Socket listen() failed.", strerror(errno)));
+        throw std::runtime_error(
+                Format::This("Socket listen() failed. %s.", strerror(errno))
+                );
     }
 
     this->manager->RegisterEvent(this->GetHandle(), EventType::Read, EventAction::Add);
 
     this->running = true;
 
+    auto* tpool = new ThreadPool(32);
+
+    tpool->enqueue([this]() -> void {
+        // this->HandleConnections();
+    });
+
+    TRACE("12 %s", ".");
+
     this->HandleConnections();
 }
 
-bool Server::SetSocketOption(int option) {
+bool Server::SetSocketOption(int option) const {
 
     int optval = 1;
     socklen_t  optlen = sizeof(optval);
@@ -117,7 +117,7 @@ bool Server::SetSocketOption(int option) {
     return optval;
 }
 
-bool Server::GetSocketOption(int option) {
+bool Server::GetSocketOption(int option) const {
 
     int optval = 1;
     socklen_t  optlen = sizeof(optval);
@@ -132,7 +132,7 @@ bool Server::GetSocketOption(int option) {
     return optval;
 }
 
-SocketHandle Server::GetHandle() {
+SocketHandle Server::GetHandle() const {
     return this->serverSocket;
 }
 
@@ -224,7 +224,11 @@ void Server::HandleNewConnectionEvent() {
     // accept the client
     auto* ctx = this->connectionsMemPool->Allocate<SocketContext>();
 
+    auto timer = new Timer(true);
+
     this->channel->AcceptConnection(this->GetHandle(), ctx);
+
+    TRACE("Accepted Connection took %f ms", timer->Stop() * 0.001)
 
     if (this->clientConnectedDelegate != nullptr)
         this->clientConnectedDelegate(ctx);

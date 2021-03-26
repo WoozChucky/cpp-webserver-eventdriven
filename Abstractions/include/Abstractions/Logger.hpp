@@ -9,9 +9,11 @@
 #include <cstring>
 #include <cstdarg>
 
+#define TRACE(fmt, ...) \
+        fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __PRETTY_FUNCTION__, __LINE__,  __VA_ARGS__);
+
 #if DEBUG_ENABLED
-    #define TRACE(fmt, ...) \
-        fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __PRETTY_FUNCTION__, __LINE__,  __VA_ARGS__)
+
 #else
     #define TRACE(fmt, ...) \
      //

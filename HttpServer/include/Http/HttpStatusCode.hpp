@@ -5,7 +5,9 @@
 #ifndef HTTPSTATUSCODE_HPP
 #define HTTPSTATUSCODE_HPP
 
-enum HttpStatusCode : int {
+#include <Abstractions/Types.hpp>
+
+enum HttpStatusCode : U16 {
 
     /* 1xx Status Codes */
     CONTINUE = 100,

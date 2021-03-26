@@ -13,13 +13,16 @@ set(Headers
         include/Abstractions/Types.hpp
         include/Abstractions/ThreadPool.hpp
         include/Abstractions/Format.hpp
-        include/Abstractions/Directory.hpp)
+        include/Abstractions/Directory.hpp
+        include/Abstractions/Timer.hpp
+        )
 
 set(Sources
         src/MemoryPool.cpp
         src/File.cpp
         src/DynamicLibrary.cpp
         src/DynamicLibraryImpl.hpp
+        src/Timer.cpp
 
         src/Linux/Directory.cpp)
 

@@ -30,6 +30,13 @@ if(MSVC)
     )
 endif()
 
+# Options
+option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" ON)
+if(DEBUG_ENABLED)
+    message(DEBUG: ${DEBUG_ENABLED})
+    add_definitions(-DDEBUG_ENABLED)
+endif()
+
 add_library(${This} SHARED ${Sources} ${Headers})
 
 find_package(LibreSSL REQUIRED)

@@ -18,20 +18,19 @@ public:
 
     explicit HttpResponse();
 
-    U16 GetBufferSize();
-    Memory GetBuffer();
-
     void SetBody(std::string body);
     void SetStatusCode(HttpStatusCode code);
     void SetProtocol(HttpProtocol protocol);
     void AddHeader(const HttpHeader& header);
 private:
 
-    HttpStatusCode _code;
-    HttpProtocol _protocol;
+    HttpStatusCode _code {OK};
+    HttpProtocol _protocol {V1_1};
     HttpHeaders _headers;
     HttpContext _context;
     std::string _body;
+
+    Buffer _buffer;
 };
 
 #endif //HTTPRESPONSE_HPP

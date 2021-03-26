@@ -42,9 +42,9 @@ private:
 
     ServerConfiguration* _configuration;
 
-    SocketHandle GetHandle();
-    bool SetSocketOption(int option);
-    bool GetSocketOption(int option);
+    SocketHandle GetHandle() const;
+    bool SetSocketOption(int option) const;
+    bool GetSocketOption(int option) const;
     void HandleConnections();
 
     void HandleNewConnectionEvent();

@@ -39,7 +39,7 @@ std::string NormalChannel::Read(SocketContext* ctx) {
     return reinterpret_cast<const char *>(recv(ctx->Socket.Handle, (void *) "", 0, 0));
 }
 
-size_t NormalChannel::Write(SocketContext* ctx, void *data, size_t dataLength) {
+size_t NormalChannel::Write(SocketContext* ctx, Buffer* buffer) {
     //TODO(Levezinho): Implement this
     return 0;
 }

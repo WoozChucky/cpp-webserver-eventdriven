@@ -36,9 +36,9 @@ private:
     [[nodiscard]] EventManager* GetEventManager() const;
     [[nodiscard]] Server* GetTransport() const;
 
-    void onClientConnected(SocketContext* ctx);
-    void onClientDisconnected(SocketContext* ctx);
-    void onClientMessage(SocketContext* ctx, const std::string& messageBuffer);
+    void OnClientConnected(SocketContext* ctx);
+    void OnClientDisconnected(SocketContext* ctx);
+    void OnClientMessage(SocketContext* ctx, const std::string& messageBuffer);
 
     U16 WriteResponse(SocketContext* ctx, HttpResponse* response);
 };

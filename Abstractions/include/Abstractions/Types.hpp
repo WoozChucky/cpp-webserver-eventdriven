@@ -84,7 +84,7 @@ typedef struct Socket {
     /**
      * @brief The internet protocol address in a human-readable format.
      */
-    std::string Address;
+    // std::string Address;
 
     /**
      * @brief Specifies the protocol used (IPv4 or IPv6).
@@ -107,12 +107,12 @@ typedef struct SocketContext {
     /**
      * @brief The socket object
      */
-    Socket Socket {0, 0, nullptr, IPType::Unsupported, BlockingMode::Unknown };
+    Socket Socket {0, 0, /*""*/ IPType::Unsupported, BlockingMode::Unknown };
 
     /**
      * @brief The tls context
      */
-    tls* TLS{nullptr};
+    tls* TLS{};
 
     /**-
      * @brief Flag indicating is this context is secure
@@ -137,5 +137,22 @@ typedef struct HandledEvent {
     EventType Type;
 
 } HandledEvent;
+
+/**
+ * @brief
+ */
+typedef struct Buffer {
+
+    /**
+     * @brief
+     */
+    Memory Data {nullptr};
+
+    /**
+     * @brief
+     */
+    U16 Size {0};
+
+} Buffer;
 
 #endif //TYPES_HPP

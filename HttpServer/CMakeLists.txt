@@ -16,7 +16,10 @@ set(Headers
         include/Http/HttpProtocol.hpp
         include/Http/HttpRequest.hpp
         include/Http/HttpResponse.hpp
-        include/Http/HttpStatusCode.hpp)
+        include/Http/HttpStatusCode.hpp
+        include/Http/Exceptions/HttpException.hpp
+        include/Http/Exceptions/NotFoundException.hpp
+        )
 
 set(Sources
         src/HttpServer.cpp src/HttpParser.cpp src/HttpHeader.cpp src/HttpRouter.cpp src/HttpRequest.cpp src/HttpResponse.cpp)

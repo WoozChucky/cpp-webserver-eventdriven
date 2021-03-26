@@ -17,7 +17,7 @@ public:
     void AcceptConnection(SocketHandle handle, SocketContext* outContext) override;
     void DisposeConnection(SocketContext* ctx) override;
     std::string Read(SocketContext *ctx) override;
-    size_t Write(SocketContext* ctx, Memory data, size_t dataLength) override;
+    size_t Write(SocketContext* ctx, Buffer* buffer) override;
 
 private:
     TLS* _serverTls{};
@@ -31,8 +31,8 @@ private:
     const U8 *publicKey{};
     size_t publicKeySize{};
 
-    std::vector<char> pub;
-    std::vector<char> key;
+    std::vector<U8> pub;
+    std::vector<U8> key;
 
     void LoadPrivateKey(const char* filename);
     void LoadPublicKey(const char* filename);

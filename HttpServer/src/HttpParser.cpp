@@ -4,6 +4,7 @@
 
 #include <Http/HttpParser.hpp>
 #include <deque>
+#include <cstring>
 
 HttpParser::HttpParser(HttpProtocol protocol) {
     this->_protocol = protocol;
@@ -47,7 +48,7 @@ bool RequestHasBody(HttpMethod method) {
     return method == ::POST;
 }
 
-HttpRequest HttpParser::RequestFromBuffer(const std::string& buffer) {
+HttpRequest* HttpParser::RequestFromBuffer(const std::string& buffer) {
 
     auto lines = split(buffer, "\r\n");
 
@@ -69,7 +70,9 @@ HttpRequest HttpParser::RequestFromBuffer(const std::string& buffer) {
 
     auto headerCount = 0;
 
-    for(unsigned long idx = 0; idx < lines.size() - 1; idx++) {
+    auto totalHeaders = lines.size() - (hasBody ? 1 : 0);
+
+    for(unsigned long idx = 0; idx < totalHeaders; idx++) {
         auto key = get_left_of_delim(lines[idx], ":");
         auto value = get_right_of_delim(lines[idx], ":");
 
@@ -82,7 +85,27 @@ HttpRequest HttpParser::RequestFromBuffer(const std::string& buffer) {
 
     auto body = lines.empty() ? "" :  lines[0];
 
-    auto request = HttpRequest(path, HttpProtocol::V1_1, httpMethod, headers, body);
+    return new HttpRequest(path, HttpProtocol::V1_1, httpMethod, headers, body);
+}
 
-    return request;
+Buffer *HttpParser::BufferFromResponse(HttpResponse* response) {
+
+    std::string responseString =   "HTTP/1.1 200 OK\r\n"
+                                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+                                   "Connection: Keep-Alive\r\n"
+                                   "Content-Type: application/json\r\n"
+                                   "Content-Length: 13\r\n"
+                                   "\r\n"
+                                   "{\"obj\": true}";
+
+    auto size = responseString.size();
+
+    auto buffer = new Buffer;
+
+    buffer->Data = malloc(size);
+    buffer->Size = size;
+
+    memmove(buffer->Data, responseString.data(), size);
+
+    return buffer;
 }

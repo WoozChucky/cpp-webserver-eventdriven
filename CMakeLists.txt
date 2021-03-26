@@ -57,7 +57,7 @@ if(ParentDirectory STREQUAL "")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
     # Options
-    option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" OFF)
+    option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" ON)
     if(DEBUG_ENABLED)
         message(DEBUG: ${DEBUG_ENABLED})
         add_definitions(-DDEBUG_ENABLED)

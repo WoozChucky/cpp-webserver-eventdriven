@@ -7,11 +7,12 @@
 
 #include <vector>
 #include <string>
+#include <Abstractions/Types.hpp>
 
 class File {
 
 public:
-    static std::vector<char> ReadAllBytes(const std::string& filename);
+    static std::vector<U8> ReadAllBytes(const std::string& filename);
     static bool Exists(const std::string& filename);
 
 };

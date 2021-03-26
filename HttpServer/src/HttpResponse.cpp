@@ -5,51 +5,16 @@
 #include <Http/HttpResponse.hpp>
 #include <Abstractions/Logger.hpp>
 
+/*
 static std::string temp = "HTTP/1.1 404 Not Found\r\n"
                    "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
                    "Connection: Keep-Alive\r\n"
                    "Content-Type: text/html\r\n"
                    "Content-Length: 0\r\n"
                    "\r\n";
+*/
 
-HttpResponse::HttpResponse() {
-
-}
-
-Memory HttpResponse::GetBuffer() {
-
-    // TODO(Levezinho): Auto-calculate the content length based on the body .size()
-    // response->AddHeader(HttpHeader("Content-Length", "13"));
-
-    std::string responseString =   "HTTP/1.1 200 OK\r\n"
-                                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                                   "Connection: Keep-Alive\r\n"
-                                   "Content-Type: application/json\r\n"
-                                   "Content-Length: 13\r\n"
-                                   "\r\n"
-                                   "{\"obj\": true}";
-
-    TRACE("%s", "Using implicit operator.");
-
-    return (Memory) responseString.c_str();
-}
-
-U16 HttpResponse::GetBufferSize() {
-
-    std::string responseString =   "HTTP/1.1 200 OK\r\n"
-                                   "Date: Mon, 16 Sep 2020 09:10:10 GMT\r\n"
-                                   "Connection: Keep-Alive\r\n"
-                                   "Content-Type: application/json\r\n"
-                                   "Content-Length: 13\r\n"
-                                   "\r\n"
-                                   "{\"obj\": true}";
-
-    U16 size = responseString.size();
-
-    TRACE("Getting buffer size - %d.", size);
-
-    return size;
-}
+HttpResponse::HttpResponse() = default;
 
 void HttpResponse::SetBody(std::string body) {
     this->_body = std::move(body);
