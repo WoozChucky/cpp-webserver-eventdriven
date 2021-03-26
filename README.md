@@ -14,6 +14,10 @@ The code is a tentative to implement one approach mentioned in this [article](ht
 
 [![Linux x64](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/ccpp.yml/badge.svg)](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/ccpp.yml)
 
+### Code Quality
+
+[![CodeQL](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/codeql-analysis.yml/badge.svg?branch=develop)](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/codeql-analysis.yml)
+
 ### Modules
 
 Very conceptual diagram of the project architecture
