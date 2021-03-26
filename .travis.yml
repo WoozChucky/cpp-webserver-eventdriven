@@ -1,12 +1,43 @@
-dist: focal
 language: cpp
 
-sudo: required # only for faster builds
-
-# Compiler selection
-compiler:
-  - clang
-  - gcc
+matrix:
+  include:
+    - compiler: clang
+      os: osx
+      env: ARCH=native
+    - compiler: gcc
+      os: osx
+      env: ARCH=native
+    - compiler: clang
+      os: linux
+      env: ARCH=native
+      dist: focal
+      sudo: required
+    - compiler: gcc
+      os: linux
+      env: ARCH=native
+      dist: focal
+      sudo: required
+    - compiler: gcc
+      os: linux
+      env: ARCH=mingw32
+      dist: focal
+      sudo: required
+    - compiler: gcc
+      os: linux
+      env: ARCH=mingw64
+      dist: focal
+      sudo: required
+    - compiler: gcc
+      os: linux
+      env: ARCH=arm32
+      dist: focal
+      sudo: required
+    - compiler: gcc
+      os: linux
+      env: ARCH=arm64
+      dist: focal
+      sudo: required
 
 # Build steps
 script: 
