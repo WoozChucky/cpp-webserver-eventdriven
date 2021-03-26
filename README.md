@@ -10,6 +10,10 @@ The code is a tentative to implement one approach mentioned in this [article](ht
 
 ...todo
 
+### Build Status
+
+[![MacOS](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/ccpp.yml/badge.svg)](https://github.com/WoozChucky/cpp-webserver-eventdriven/actions/workflows/ccpp.yml)
+
 ### Modules
 
 Very conceptual diagram of the project architecture
