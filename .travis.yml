@@ -1,7 +1,7 @@
-#travis configuration for coverage testing
+dist: focal
 language: cpp
 
-sudo: true # only for faster builds
+sudo: required # only for faster builds
 
 # Compiler selection
 compiler:
