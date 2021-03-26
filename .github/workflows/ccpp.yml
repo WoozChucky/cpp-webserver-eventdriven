@@ -1,20 +1,19 @@
-name: C++ CI
+name: Linux x64
 
 on: 
   push:
     branches:
     - develop
-    - master
 
 jobs:
 
   build:
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v1
+    - name: build dir
+      run: mkdir build && cd build
     - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
+      run: cmake -DCMAKE_BUILD_TYPE=Release -DOATPP_BUILD_TESTS=OFF -DLIBRESSL_APPS=OFF -DLIBRESSL_TESTS=OFF --target HttpServer ..
+    - name: build
+      run: cmake --build . --target HttpServer
