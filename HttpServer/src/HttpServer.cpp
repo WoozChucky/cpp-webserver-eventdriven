@@ -162,6 +162,8 @@ void HttpServer::OnClientMessage(SocketContext *ctx, const std::string &messageB
     response->SetProtocol(request->GetProtocol());
     response->AddHeader(HttpHeader("server", "cpp-webserver-eventdriven-1.0"));
 
+    //TODO(Nuno): The route might exist but using a different http method, we need no handle
+    // it by throwing a '405 method not allowed'. Maybe create an exception for it.
     auto handler = this->GetRouter()->GetHandler(request->GetPath(), request->GetMethod());
 
     try {

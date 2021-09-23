@@ -5,6 +5,7 @@
 #include <Http/HttpParser.hpp>
 #include <deque>
 #include <cstring>
+#include <sstream>
 
 HttpParser::HttpParser(HttpProtocol protocol) {
     this->_protocol = protocol;
@@ -88,7 +89,52 @@ HttpRequest* HttpParser::RequestFromBuffer(const std::string& buffer) {
     return new HttpRequest(path, HttpProtocol::V1_1, httpMethod, headers, body);
 }
 
+/*
+static std::string temp = "HTTP/1.1 404 Not Found\r\n"
+                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+                   "Connection: Keep-Alive\r\n"
+                   "Content-Type: text/html\r\n"
+                   "Content-Length: 0\r\n"
+                   "\r\n";
+*/
+
+std::string GetReadableProtocol(HttpProtocol protocol) {
+
+    switch (protocol) {
+        case V1_0:
+            return "1.0";
+        default:
+        case V1_1:
+            return "1.1";
+        case V2:
+            return "2.0";
+    }
+
+}
+
+std::string GetReadableStatusCode(HttpStatusCode code) {
+    switch (code) {
+        case OK:
+            return "200 OK";
+        default:
+        case NOT_FOUND:
+            return "404 NotFound";
+        case INTERNAL_SERVER_ERROR:
+            return "500 InternalServerError";
+    }
+}
+
 Buffer *HttpParser::BufferFromResponse(HttpResponse* response) {
+
+    std::stringstream ss;
+
+    ss << "HTTP/" << GetReadableProtocol(response->GetProtocol()) << " " << GetReadableStatusCode(response->GetStatusCode()) << "\r\n";
+    ss << "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+          "Connection: Keep-Alive\r\n"
+          "Content-Type: application/json\r\n"
+          "Content-Length: 13\r\n"
+          "\r\n"
+          "{\"obj\": true}";
 
     std::string responseString =   "HTTP/1.1 200 OK\r\n"
                                    "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
@@ -98,14 +144,14 @@ Buffer *HttpParser::BufferFromResponse(HttpResponse* response) {
                                    "\r\n"
                                    "{\"obj\": true}";
 
-    auto size = responseString.size();
+    auto size = ss.str().size();
 
     auto buffer = new Buffer;
 
     buffer->Data = malloc(size);
     buffer->Size = size;
 
-    memmove(buffer->Data, responseString.data(), size);
+    memmove(buffer->Data, ss.str().data(), size);
 
     return buffer;
 }
