@@ -62,6 +62,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
+       sh install-dependencies.sh
        sh build-libressl.sh
        sh build.sh
 
