@@ -17,3 +17,5 @@ cmake-build-debug/
 
 build/
 /.vs/
+
+.idea/
