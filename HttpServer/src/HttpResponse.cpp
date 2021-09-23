@@ -5,15 +5,6 @@
 #include <Http/HttpResponse.hpp>
 #include <Abstractions/Logger.hpp>
 
-/*
-static std::string temp = "HTTP/1.1 404 Not Found\r\n"
-                   "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
-                   "Connection: Keep-Alive\r\n"
-                   "Content-Type: text/html\r\n"
-                   "Content-Length: 0\r\n"
-                   "\r\n";
-*/
-
 HttpResponse::HttpResponse() = default;
 
 void HttpResponse::SetBody(std::string body) {
@@ -32,5 +23,19 @@ void HttpResponse::AddHeader(const HttpHeader& header) {
     this->_headers.push_back(header);
 }
 
+std::string HttpResponse::GetBody() {
+    return this->_body;
+}
 
+HttpStatusCode HttpResponse::GetStatusCode() {
+    return this->_code;
+}
+
+HttpProtocol HttpResponse::GetProtocol() {
+    return this->_protocol;
+}
+
+HttpHeaders HttpResponse::GetHeaders() {
+    return this->_headers;
+}
 

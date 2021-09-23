@@ -22,6 +22,12 @@ public:
     void SetStatusCode(HttpStatusCode code);
     void SetProtocol(HttpProtocol protocol);
     void AddHeader(const HttpHeader& header);
+
+    std::string GetBody();
+    HttpStatusCode GetStatusCode();
+    HttpProtocol GetProtocol();
+    HttpHeaders GetHeaders();
+
 private:
 
     HttpStatusCode _code {OK};
