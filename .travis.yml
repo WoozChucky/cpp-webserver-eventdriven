@@ -42,5 +42,5 @@ matrix:
 # Build steps
 script: 
   - cd ${TRAVIS_BUILD_DIR}
-  - sh install-dependencies.sh && sh build-libressl.sh && sh build.sh
+  - sh build-libressl.sh && sh build.sh
   
