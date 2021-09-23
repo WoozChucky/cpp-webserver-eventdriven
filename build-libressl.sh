@@ -10,7 +10,7 @@ sudo ./configure
 
 mkdir build
 
-cd build
+cd build || exit
 
 cmake -DCMAKE_BUILD_TYPE=Release -DLIBRESSL_APPS=OFF -DLIBRESSL_TESTS=OFF ..
 
