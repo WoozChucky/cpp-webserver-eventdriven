@@ -7,5 +7,5 @@
 #include <unistd.h>
 
 std::string Directory::CurrentWorkingDirectory() {
-    return std::string(get_current_dir_name());
+    return {get_current_dir_name()};
 }
