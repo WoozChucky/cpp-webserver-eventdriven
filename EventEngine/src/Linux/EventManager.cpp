@@ -6,36 +6,35 @@
 #include <Abstractions/Logger.hpp>
 
 EventManager::EventManager() {
-    this->handle = epoll_create(32);
+    //this->handle = epoll_create(32);
+    this->handle = kqueue();
 }
 
 void EventManager::RegisterEvent(SocketContext* ctx, EventType, EventAction action, bool saveContext) {
 
-    epoll_event evSet{};
+    Event evt{};
 
-    evSet.events = EPOLLIN | EPOLLET;
+    evt.filter = EVFILT_READ;
 
-    if (saveContext)
-        evSet.data.ptr = ctx;
+    EV_SET(&evt, ctx->Socket.Handle, EVFILT_READ, action, 0, 0, saveContext ? ctx : nullptr);
 
-    if (epoll_ctl(this->GetHandle(), action, ctx->Socket.Handle, &evSet) == -1)
+    if (kevent(this->GetHandle(), &evt, 1, nullptr, 0, nullptr ) == -1)
         TRACE("%s", "Failed to register event.");
 }
 
-void EventManager::RegisterEvent(SocketHandle socket, EventType, EventAction action) {
+void EventManager::RegisterEvent(SocketHandle socket, EventType evtType, EventAction action) const {
 
-    epoll_event evSet{};
+    Event evt{};
 
-    evSet.events = EPOLLIN | EPOLLET;
-    evSet.data.fd = socket;
+    EV_SET(&evt, socket, evtType, action, 0, 0, nullptr);
 
-    if (epoll_ctl(this->GetHandle(), action, socket, &evSet) == -1)
+    if (kevent(this->GetHandle(), &evt, 1, nullptr, 1, nullptr) == -1)
         TRACE("%s", "Failed to register event.");
 }
 
 int EventManager::GetFiredNotifications(Event *eventList, int maxEvents) {
 
-    auto nEvents = epoll_wait(this->GetHandle(), eventList, maxEvents, -1);
+    auto nEvents = kevent(this->GetHandle(), nullptr, 0, eventList, maxEvents, nullptr);
     if (nEvents < 1) {
         TRACE("%s", "Failed getting fired notifications..");
     }
@@ -43,6 +42,6 @@ int EventManager::GetFiredNotifications(Event *eventList, int maxEvents) {
     return nEvents;
 }
 
-EventHandle EventManager::GetHandle() {
+EventHandle EventManager::GetHandle() const {
     return this->handle;
 }

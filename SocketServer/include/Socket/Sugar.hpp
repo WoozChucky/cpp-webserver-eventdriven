@@ -24,7 +24,7 @@ using TLSConfig         = struct tls_config;
 #include <netinet/in.h>
 #include <sys/epoll.h>
 
-using Event             = struct epoll_event;
+//using Event             = struct epoll_event;
 #endif
 
 

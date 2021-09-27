@@ -48,6 +48,6 @@ if(UNIX)
             )
 endif(UNIX)
 
-target_link_libraries(${This} Abstractions)
+target_link_libraries(${This} Abstractions kqueue)
 
 # add_subdirectory(test)

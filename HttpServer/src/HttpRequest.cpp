@@ -25,12 +25,12 @@ const HttpProtocol &HttpRequest::GetProtocol() const
     return _protocol;
 }
 
-const HttpHeaders &HttpRequest::GetHeaders() const
+[[maybe_unused]] const HttpHeaders &HttpRequest::GetHeaders() const
 {
     return _headers;
 }
 
-const std::string& HttpRequest::GetHeader(const std::string& key) const
+std::string HttpRequest::GetHeader(const std::string& key) const
 {
     for(auto& ref : _headers) {
         if (ref.GetKey() == key)

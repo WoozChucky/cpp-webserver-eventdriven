@@ -10,8 +10,10 @@
 #include <tls.h>
 
 #if LINUX
+#include <kqueue/sys/event.h>
 #include <sys/epoll.h>
-using Event         = struct epoll_event;
+//using Event         = struct epoll_event;
+using Event         = struct kevent;
 #endif
 
 #if MACOS
