@@ -35,6 +35,8 @@ if(MSVC)
     )
 endif()
 
+include_directories(../KQueue/include)
+
 add_library(${This} SHARED ${Sources} ${Headers})
 
 target_include_directories(${This} PUBLIC include)

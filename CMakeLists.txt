@@ -93,6 +93,8 @@ if(ParentDirectory STREQUAL "")
 
     find_package(LibreSSL 3.0.0 REQUIRED)
 
+    add_subdirectory(KQueue)
+
     # All other modules can be pulled in without further configuration.
     add_subdirectory(Abstractions)
     add_subdirectory(EventEngine)
