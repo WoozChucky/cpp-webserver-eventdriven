@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 3.13)
 set(This HttpServer)
 
 set(Headers
-        include/Http/Sugar.hpp
         include/Http/HttpServer.hpp
         include/Http/HttpRouter.hpp
         include/Http/HttpContext.hpp
