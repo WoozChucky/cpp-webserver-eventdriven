@@ -76,10 +76,14 @@ if(ParentDirectory STREQUAL "")
 
     if(APPLE)
         add_definitions(-DMACOS)
-    elseif(UNIX)
+    elseif(UNIX AND NOT APPLE)
         add_definitions(-DLINUX)
     elseif(MSVC)
         add_definitions(-DWINDOWS)
+    endif()
+
+    if(UNIX AND NOT APPLE)
+        set(LINUX TRUE)
     endif()
 
     # LibreSSL

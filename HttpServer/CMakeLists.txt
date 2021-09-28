@@ -21,7 +21,12 @@ set(Headers
         )
 
 set(Sources
-        src/HttpServer.cpp src/HttpParser.cpp src/HttpHeader.cpp src/HttpRouter.cpp src/HttpRequest.cpp src/HttpResponse.cpp)
+        src/HttpServer.cpp
+        src/HttpParser.cpp
+        src/HttpHeader.cpp
+        src/HttpRouter.cpp
+        src/HttpRequest.cpp
+        src/HttpResponse.cpp)
 
 if(MSVC)
     add_definitions(
@@ -41,13 +46,13 @@ set_target_properties(${This} PROPERTIES
         FOLDER Libraries
         )
 
-if(UNIX)
+if(LINUX)
     target_link_libraries(${This}
             pthread
             dl
             ${OPENSSL_LIBRARIES}
             )
-endif(UNIX)
+endif(LINUX)
 
 target_link_libraries(${This} SocketServer LibreSSL::TLS Abstractions)
 

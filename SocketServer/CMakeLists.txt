@@ -33,7 +33,6 @@ endif()
 # Options
 option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" ON)
 if(DEBUG_ENABLED)
-    message(DEBUG: ${DEBUG_ENABLED})
     add_definitions(-DDEBUG_ENABLED)
 endif()
 
@@ -47,13 +46,13 @@ set_target_properties(${This} PROPERTIES
         FOLDER Libraries
         )
 
-if(UNIX)
+if(LINUX)
     target_link_libraries(${This}
             pthread
             dl
             ${OPENSSL_LIBRARIES}
             )
-endif(UNIX)
+endif(LINUX)
 
 target_link_libraries(${This} LibreSSL::TLS Abstractions EventEngine)
 

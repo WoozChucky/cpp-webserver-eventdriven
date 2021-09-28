@@ -12,7 +12,6 @@
 #include <Events/EventHandler.hpp>
 #include <Abstractions/ThreadPool.hpp>
 
-
 class Server {
 
 public:

@@ -13,12 +13,17 @@ set(Sources )
 
 if(APPLE)
     list(APPEND Sources
-            src/MacOS/MacEventManager.cpp)
-elseif(UNIX)
+            src/MacOS/EventHandler.cpp
+            src/MacOS/EventManager.cpp)
+endif()
+
+if(LINUX)
     list(APPEND Sources
             src/Linux/EventManager.cpp
             src/Linux/EventHandler.cpp)
-elseif(MSVC)
+endif()
+
+if(MSVC)
     list(APPEND Sources
             src/Win/EventManager.cpp
             src/Win/EventHandler.cpp)
@@ -30,6 +35,8 @@ elseif(MSVC)
     )
 endif()
 
+include_directories(${LIBRESSL_INCLUDE_DIR})
+
 add_library(${This} SHARED ${Sources} ${Headers})
 
 find_package(LibreSSL REQUIRED)
@@ -40,14 +47,15 @@ set_target_properties(${This} PROPERTIES
         FOLDER Libraries
         )
 
-if(UNIX)
+if(LINUX)
+    message("This is unix!")
     target_link_libraries(${This}
             pthread
             dl
-            ${OPENSSL_LIBRARIES}
+            kqueue
             )
-endif(UNIX)
+endif(LINUX)
 
-target_link_libraries(${This} Abstractions kqueue)
+target_link_libraries(${This} Abstractions ${OPENSSL_LIBRARIES})
 
 # add_subdirectory(test)

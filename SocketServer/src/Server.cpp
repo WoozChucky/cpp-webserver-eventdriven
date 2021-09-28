@@ -7,17 +7,6 @@
 #include <Socket/Channels/SecureChannel.hpp>
 #include <Socket/Channels/NormalChannel.hpp>
 
-#if MACOS
-#include <sys/event.h>
-#endif
-
-#if LINUX
-#include <cassert>
-#include <cstring>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-
 #include <Abstractions/Format.hpp>
 #include <Abstractions/ThreadPool.hpp>
 #include <Abstractions/Timer.hpp>

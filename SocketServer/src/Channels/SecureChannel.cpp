@@ -2,19 +2,17 @@
 // Created by Nuno Levezinho Silva on 30/09/2019.
 //
 
-#include "Socket/Channels/SecureChannel.hpp"
+#include <Socket/Channels/SecureChannel.hpp>
 
-#include <tls.h>
-#include <openssl/bio.h>
-
-#include <fcntl.h>
-#include <unistd.h>
 #include <Abstractions/File.hpp>
 #include <Abstractions/Directory.hpp>
 #include <Abstractions/Format.hpp>
 #include <Socket/NetUtils.hpp>
-#include <cstring>
 
+#include <tls.h>
+#include <openssl/bio.h>
+
+#include <cstring>
 
 void SecureChannel::prepare() {
 

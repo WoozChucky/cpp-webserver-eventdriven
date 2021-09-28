@@ -6,6 +6,7 @@
 
 #include <cstdio>
 #include <sys/event.h>
+#include <Abstractions/Logger.hpp>
 
 EventManager::EventManager() {
     this->handle = kqueue();
@@ -24,7 +25,7 @@ void EventManager::RegisterEvent(SocketContext* ctx, EventType type, EventAction
         TRACE("%s", "Failed to register event.");
 }
 
-void EventManager::RegisterEvent(SocketHandle socket, EventType type, EventAction action) {
+void EventManager::RegisterEvent(SocketHandle socket, EventType type, EventAction action) const {
 
     Event evSet;
 
@@ -45,6 +46,6 @@ int EventManager::GetFiredNotifications(Event *eventList, int maxEvents) {
     return nEvents;
 }
 
-EventHandle EventManager::GetHandle() {
+EventHandle EventManager::GetHandle() const {
     return this->handle;
 }

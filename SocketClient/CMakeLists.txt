@@ -15,8 +15,7 @@ set(Sources
 include_directories(${LIBRESSL_INCLUDE_DIR})
 
 if(APPLE)
-    list(APPEND Sources
-            src/Events/MacEventManager.cpp)
+
 elseif(UNIX)
     # list(APPEND Sources
     #         src/Events/LinuxEventManager.cpp

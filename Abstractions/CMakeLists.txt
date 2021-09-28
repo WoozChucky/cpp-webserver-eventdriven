@@ -23,10 +23,17 @@ set(Sources
         src/File.cpp
         src/DynamicLibrary.cpp
         src/DynamicLibraryImpl.hpp
-        src/Timer.cpp
-        src/Linux/Directory.cpp)
+        src/Timer.cpp)
 
-if(MSVC)
+if(APPLE)
+    list(APPEND Sources
+            src/MacOS/Directory.cpp)
+elseif(LINUX)
+    list(APPEND Sources
+            src/Linux/Directory.cpp)
+elseif(MSVC)
+    list(APPEND Sources )
+
     add_definitions(
             -DUNICODE -D_UNICODE
             -D_CRT_SECURE_NO_WARNINGS
@@ -35,8 +42,11 @@ if(MSVC)
 endif()
 
 include_directories(../KQueue/include)
+include_directories(${LIBRESSL_INCLUDE_DIR})
 
 add_library(${This} SHARED ${Sources} ${Headers})
+
+find_package(LibreSSL REQUIRED)
 
 target_include_directories(${This} PUBLIC include)
 
@@ -44,13 +54,13 @@ set_target_properties(${This} PROPERTIES
         FOLDER Libraries
         )
 
-if(UNIX)
+if(LINUX)
     target_link_libraries(${This}
             pthread
             dl
             )
-endif(UNIX)
+endif(LINUX)
 
-target_link_libraries(${This} tls)
+target_link_libraries(${This} ${OPENSSL_LIBRARIES})
 
 # add_subdirectory(test)

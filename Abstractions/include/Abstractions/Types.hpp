@@ -9,7 +9,6 @@
 #include <string>
 #include <tls.h>
 
-
 #include <sys/event.h>
 
 using Event         = struct kevent;

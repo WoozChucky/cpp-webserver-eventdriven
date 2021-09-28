@@ -12,21 +12,30 @@
 
 #include <Abstractions/Types.hpp>
 
+#if MACOS
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <sys/event.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
+
+#if LINUX
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <sys/epoll.h>
+#include <cassert>
+#include <cstring>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
 using SocketAddress     = struct sockaddr;
 using SocketAddressIn   = struct sockaddr_in;
 using SocketAddressIn6  = struct sockaddr_in6;
 using SocketStorage     = struct sockaddr_storage;
 using TLS               = struct tls;
 using TLSConfig         = struct tls_config;
-
-#if LINUX
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/epoll.h>
-
-//using Event             = struct epoll_event;
-#endif
-
 
 /**
  * @brief The SocketServer configuration to be passed on initialization.
