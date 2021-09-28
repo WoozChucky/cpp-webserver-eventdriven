@@ -2,11 +2,11 @@
 // Created by Nuno on 3/25/2021.
 //
 
-
-#include <exception>
-
 #ifndef HTTPEXCEPTION_HPP
 #define HTTPEXCEPTION_HPP
+
+#include <Http/HttpStatusCode.hpp>
+#include <exception>
 
 class HttpException : public std::runtime_error {
 

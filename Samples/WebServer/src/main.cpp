@@ -30,8 +30,10 @@ The non-blocking tcp server can be implemented as follows:
 
 void HandleBaseRoute(HttpRequest* request, HttpResponse* response) {
     // do stuff
-    TRACE("%s", request->GetHeader("Content-Length").data());
-    TRACE("%s", request->GetBody().data());
+    if (request->HasBody()) {
+        TRACE("%s", request->GetHeader("Content-Length").data())
+        TRACE("%s", request->GetBody().data())
+    }
 
     response->SetStatusCode(HttpStatusCode::OK);
     response->SetProtocol(HttpProtocol::V1_1);
@@ -59,7 +61,8 @@ int main(int argc, char **argv) {
 
     auto http = new HttpServer(options);
 
-    http->Handle("/", HandleBaseRoute);
+    http->Handle("/", HttpMethod::GET, HandleBaseRoute);
+    //http->Handle("/", HttpMethod::POST, HandleBaseRoute);
 
     http->Handle("/register",HttpMethod::POST, HandleRegisterRoute);
 

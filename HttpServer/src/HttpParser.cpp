@@ -46,7 +46,7 @@ std::string get_left_of_delim(std::string const& str, std::string const& delim){
 }
 
 bool RequestHasBody(HttpMethod method) {
-    return method == ::POST;
+    return method == ::POST || method == ::PATCH || method == ::PUT;
 }
 
 HttpRequest* HttpParser::RequestFromBuffer(const std::string& buffer) {
@@ -128,13 +128,15 @@ Buffer *HttpParser::BufferFromResponse(HttpResponse* response) {
 
     std::stringstream ss;
 
+    auto body = response->GetBody();
+
     ss << "HTTP/" << GetReadableProtocol(response->GetProtocol()) << " " << GetReadableStatusCode(response->GetStatusCode()) << "\r\n";
     ss << "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
           "Connection: Keep-Alive\r\n"
           "Content-Type: application/json\r\n"
-          "Content-Length: 13\r\n"
+          "Content-Length: "<< body.length() <<"\r\n"
           "\r\n"
-          "{\"obj\": true}";
+          << body;
 
     std::string responseString =   "HTTP/1.1 200 OK\r\n"
                                    "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"

@@ -27,6 +27,7 @@ public:
     [[nodiscard]] std::string GetHeader(const std::string& key) const;
     [[nodiscard]] const std::string& GetBody() const;
     [[nodiscard]] const std::string& GetPath() const;
+    bool HasBody() const;
 
 private:
 

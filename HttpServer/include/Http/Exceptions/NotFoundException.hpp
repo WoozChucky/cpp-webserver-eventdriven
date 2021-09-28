@@ -6,6 +6,7 @@
 #define NOTFOUNDEXCEPTION_HPP
 
 #include <exception>
+#include <Http/Exceptions/HttpException.hpp>
 
 class NotFoundException : public HttpException {
 

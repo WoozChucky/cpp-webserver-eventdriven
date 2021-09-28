@@ -180,6 +180,7 @@ void HttpServer::OnClientMessage(SocketContext *ctx, const std::string &messageB
 
     }  catch (HttpException& ex) {
         response->SetStatusCode(ex.GetStatusCode());
+        response->SetBody(ex.what());
         response->AddHeader(HttpHeader("Connection", "Close"));
         response->AddHeader(HttpHeader("Content-Type", "text/html"));
         response->AddHeader(HttpHeader("Content-Length", "0"));

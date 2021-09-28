@@ -26,6 +26,7 @@ void HttpRouter::AddRoute(const std::string& path, HttpMethod method, HttpHandle
 
     Route route;
     route[method] = std::move(handler);
+
     this->_routes[path] = route;
 }
 
