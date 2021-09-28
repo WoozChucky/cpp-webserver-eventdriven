@@ -7,7 +7,6 @@
 
 #include <Http/HttpRequest.hpp>
 #include <Http/HttpResponse.hpp>
-#include <Http/Sugar.hpp>
 #include <map>
 #include <string>
 #include <functional>

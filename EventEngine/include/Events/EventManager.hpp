@@ -14,8 +14,8 @@ public:
     EventManager();
 
     void RegisterEvent(SocketContext* ctx, EventType type, EventAction action, bool saveContext = false);
-    void RegisterEvent(SocketHandle socket, EventType type, EventAction action);
-    EventHandle GetHandle();
+    void RegisterEvent(SocketHandle socket, EventType type, EventAction action) const;
+    [[nodiscard]] EventHandle GetHandle() const;
     int GetFiredNotifications(Event *eventList, int maxEvents);
 
 private:

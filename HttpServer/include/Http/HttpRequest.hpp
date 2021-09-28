@@ -23,8 +23,8 @@ public:
 
     [[nodiscard]] const HttpMethod& GetMethod() const;
     [[nodiscard]] const HttpProtocol& GetProtocol() const;
-    [[nodiscard]] const HttpHeaders& GetHeaders() const;
-    [[nodiscard]] const std::string& GetHeader(const std::string& key) const;
+    [[maybe_unused]] [[nodiscard]] const HttpHeaders& GetHeaders() const;
+    [[nodiscard]] std::string GetHeader(const std::string& key) const;
     [[nodiscard]] const std::string& GetBody() const;
     [[nodiscard]] const std::string& GetPath() const;
     bool HasBody() const;

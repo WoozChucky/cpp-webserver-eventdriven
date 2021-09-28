@@ -12,29 +12,29 @@ HandledEvent EventHandler::DigestEvent(Event event) {
 
     HandledEvent evt{nullptr, Weird};
 
-    if (event.data.fd == this->_serverHandle) {
+    if (event.ident == this->_serverHandle) {
 
         evt.Context = nullptr;
 
     } else {
 
-        auto ctx = reinterpret_cast<SocketContext *>(event.data.ptr);
+        auto ctx = reinterpret_cast<SocketContext *>(event.udata);
 
         evt.Context = ctx;
 
-        if ((event.events & EPOLLHUP) || (event.events & EPOLLERR)) {
+        if ((event.flags & EV_EOF) || (event.flags & EV_ERROR)) { // Error or EOF Event
 
-            evt.Type = Disconnect;
+            evt.Type = EventType::Disconnect;
         }
 
-        if (event.events & EPOLLIN) { // Read Event
+        if (event.filter == EVFILT_READ) { // Read Event
 
-            evt.Type = Read;
+            evt.Type = EventType::Read;
         }
 
-        if (event.events & EPOLLOUT) { // Write Event
+        if (event.filter == EVFILT_WRITE) { // Write Event
 
-            evt.Type = Write;
+            evt.Type = EventType::Write;
         }
 
     }

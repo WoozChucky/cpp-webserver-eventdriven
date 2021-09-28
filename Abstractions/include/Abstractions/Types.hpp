@@ -9,18 +9,10 @@
 #include <string>
 #include <tls.h>
 
-#if LINUX
-#include <sys/epoll.h>
-using Event         = struct epoll_event;
-#endif
 
-#if MACOS
+#include <sys/event.h>
+
 using Event         = struct kevent;
-#endif
-
-#if WINDOWS
-
-#endif
 
 using U8            = uint8_t;
 using U16           = uint16_t;
