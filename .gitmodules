@@ -1,3 +1,6 @@
 [submodule "LibreSSL"]
 	path = LibreSSL
 	url = https://github.com/libressl-portable/portable
+[submodule "KQueue"]
+	path = KQueue
+	url = https://github.com/WoozChucky/libkqueue.git
