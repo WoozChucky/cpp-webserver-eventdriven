@@ -4,6 +4,8 @@
 
 #include <Http/HttpRequest.hpp>
 #include <utility>
+#include <Abstractions/Format.hpp>
+#include <Http/Exceptions/NotFoundException.hpp>
 
 HttpRequest::HttpRequest(std::string path, HttpProtocol protocol, HttpMethod method, HttpHeaders headers,
                          std::string body) {
@@ -36,7 +38,12 @@ const std::string& HttpRequest::GetHeader(const std::string& key) const
         if (ref.GetKey() == key)
             return ref.GetValue();
     }
-    return "";
+    throw NotFoundException(    // No handler has been found, return 404.
+            Format::This(
+                    "Header %s not found",
+                    key.data()
+            )
+    );
 }
 
 const std::string& HttpRequest::GetBody() const
@@ -47,4 +54,8 @@ const std::string& HttpRequest::GetBody() const
 const std::string &HttpRequest::GetPath() const
 {
     return _path;
+}
+
+bool HttpRequest::HasBody() const {
+    return _method == POST || _method == PUT || _method == PATCH;
 }
