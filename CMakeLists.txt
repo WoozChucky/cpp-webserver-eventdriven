@@ -52,7 +52,6 @@ if(ParentDirectory STREQUAL "")
     # Options
     option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" ON)
     if(DEBUG_ENABLED)
-        message(DEBUG: ${DEBUG_ENABLED})
         add_definitions(-DDEBUG_ENABLED)
     endif()
 
@@ -93,7 +92,11 @@ if(ParentDirectory STREQUAL "")
 
     find_package(LibreSSL 3.0.0 REQUIRED)
 
-    add_subdirectory(KQueue)
+    message(CMake OS Platform: ${CMAKE_SYSTEM_NAME})
+
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
+        add_subdirectory(KQueue) #Kqueue is already built in MacOS by default.
+    endif()
 
     # All other modules can be pulled in without further configuration.
     add_subdirectory(Abstractions)

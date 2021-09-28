@@ -24,7 +24,6 @@ set(Sources
         src/DynamicLibrary.cpp
         src/DynamicLibraryImpl.hpp
         src/Timer.cpp
-
         src/Linux/Directory.cpp)
 
 if(MSVC)
