@@ -42,7 +42,7 @@ void HttpServer::Boot() {
                 ->WithServerPort(443)
                 ->WithSSL(true)
                 ->WithCertificate("cert.pem")
-                ->WithPrivateKey("_key.pem")
+                ->WithPrivateKey("key.pem")
                 ->Build();
     }
 
