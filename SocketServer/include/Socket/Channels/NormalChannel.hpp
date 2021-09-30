@@ -11,6 +11,7 @@
 class NormalChannel : public IChannel {
 
 public:
+	explicit NormalChannel();
 
     void AcceptConnection(SocketHandle handle, SocketContext* outContext) override;
     void DisposeConnection(SocketContext* ctx) override;
@@ -18,6 +19,8 @@ public:
     size_t Write(SocketContext* ctx, Buffer* buffer) override;
     void Terminate() override;
 
+ private:
+  	MemoryPool* memoryPool;
 };
 
 #endif //NORMALCHANNEL_HPP

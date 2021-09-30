@@ -6,10 +6,6 @@
 #define SOCKETOPTIONSBUILDER_HPP
 
 #include <Socket/Sugar.hpp>
-#include <utility>
-#include <vector>
-#include <sys/socket.h>
-#include <string>
 
 class SocketOptionBuilder {
 
@@ -85,9 +81,9 @@ private:
     };
 
     std::vector<int> _options;
-    bool _sslEnabled = true;
+    bool _sslEnabled = false;
     U16 _maxQueuedConnections = 100;
-    U16 _serverPort = 443; // default ssl port
+    U16 _serverPort = 80; // default http port. 443 is for ssl
     std::string _certificatePath;
     std::string _privateKeyPath;
 };

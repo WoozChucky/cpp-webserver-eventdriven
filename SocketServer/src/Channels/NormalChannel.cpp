@@ -9,6 +9,12 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+
+NormalChannel::NormalChannel() {
+
+	this->memoryPool = new MemoryPool(4096, 5, 100);
+}
+
 void NormalChannel::AcceptConnection(SocketHandle handle, SocketContext* outContext) {
 
     //TODO(Levezinho): Implement this
@@ -19,7 +25,9 @@ void NormalChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
         perror("accept evt()");
     }
 
-    fcntl(socket, F_SETFL, O_NONBLOCK); // Mark socket as non blocking
+	auto flags = fcntl(socket, F_GETFL, 0);
+	flags |= O_NONBLOCK;
+	fcntl(socket, F_SETFL, flags); // Mark socket as non blocking
 
     auto x =  Net::Utils::ContextFromSocketHandle(socket);
 
@@ -29,19 +37,45 @@ void NormalChannel::AcceptConnection(SocketHandle handle, SocketContext* outCont
 
 void NormalChannel::DisposeConnection(SocketContext* ctx) {
 
-    //TODO(Levezinho): Implement this
     close(ctx->Socket.Handle);
 }
 
 std::string NormalChannel::Read(SocketContext* ctx) {
 
-    //TODO(Levezinho): Implement this
-    return reinterpret_cast<const char *>(recv(ctx->Socket.Handle, (void *) "", 0, 0));
+	auto readStream = this->memoryPool->Allocate<char>();
+
+	auto totalReadBytes = 0;
+	auto lastReadBytes = -1;
+
+	std::string fullBufferedRequest;
+
+	while (lastReadBytes == -1 && totalReadBytes == 0) {
+
+		lastReadBytes = recv(ctx->Socket.Handle, readStream, this->memoryPool->BlockSize(), 0);
+		
+		if (lastReadBytes >= 0)
+			totalReadBytes += lastReadBytes;
+
+		fullBufferedRequest.append(readStream);
+
+		memset(readStream, 0, this->memoryPool->BlockSize());
+	}
+
+	this->memoryPool->Release(readStream);
+
+	TRACE("Read %d total bytes.", totalReadBytes);
+
+	return fullBufferedRequest;
 }
 
 size_t NormalChannel::Write(SocketContext* ctx, Buffer* buffer) {
-    //TODO(Levezinho): Implement this
-    return 0;
+
+	auto sentBytes = send(ctx->Socket.Handle, buffer->Data, buffer->Size, 0);
+
+	free(buffer->Data);
+	free(buffer);
+
+	return sentBytes;
 }
 
 void NormalChannel::Terminate() {
