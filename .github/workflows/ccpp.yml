@@ -24,7 +24,7 @@ jobs:
       run: cmake --version
     - name: install build dependencies
       run: sh install-dependencies.sh
-    - name: install libressl
-      run: sh build-libressl.sh
+    #- name: install libressl
+    #  run: sh build-libressl.sh
     - name: build
       run: sh build.sh
