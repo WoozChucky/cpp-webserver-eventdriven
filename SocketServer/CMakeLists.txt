@@ -20,8 +20,6 @@ set(Sources
         src/Channels/SecureChannel.cpp
         src/Server.cpp)
 
-include_directories(${LIBRESSL_INCLUDE_DIR})
-
 if(MSVC)
     add_definitions(
             -DUNICODE -D_UNICODE
@@ -38,8 +36,6 @@ endif()
 
 add_library(${This} SHARED ${Sources} ${Headers})
 
-find_package(LibreSSL REQUIRED)
-
 target_include_directories(${This} PUBLIC include)
 
 set_target_properties(${This} PROPERTIES
@@ -50,10 +46,9 @@ if(LINUX)
     target_link_libraries(${This}
             pthread
             dl
-            ${OPENSSL_LIBRARIES}
             )
 endif(LINUX)
 
-target_link_libraries(${This} LibreSSL::TLS Abstractions EventEngine)
+target_link_libraries(${This} tls Abstractions EventEngine)
 
 # add_subdirectory(test)

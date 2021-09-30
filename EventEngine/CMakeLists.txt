@@ -35,11 +35,7 @@ if(MSVC)
     )
 endif()
 
-include_directories(${LIBRESSL_INCLUDE_DIR})
-
 add_library(${This} SHARED ${Sources} ${Headers})
-
-find_package(LibreSSL REQUIRED)
 
 target_include_directories(${This} PUBLIC include)
 
@@ -56,6 +52,6 @@ if(LINUX)
             )
 endif(LINUX)
 
-target_link_libraries(${This} Abstractions ${OPENSSL_LIBRARIES})
+target_link_libraries(${This} Abstractions)
 
 # add_subdirectory(test)

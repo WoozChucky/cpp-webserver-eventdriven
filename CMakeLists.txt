@@ -91,7 +91,7 @@ if(ParentDirectory STREQUAL "")
     set(LIBRESSL_TESTS OFF)
     set(BUILD_SHARED_LIBS OFF)
 
-    find_package(LibreSSL 3.0.0 REQUIRED)
+    #find_package(LibreSSL 3.0.0 REQUIRED)
 
     message(CMake OS Platform: ${CMAKE_SYSTEM_NAME})
 
@@ -99,6 +99,9 @@ if(ParentDirectory STREQUAL "")
         add_subdirectory(KQueue) #Kqueue is already built in MacOS by default.
         include_directories(KQueue/include)
     endif()
+
+    add_subdirectory(LibreSSL)
+    include_directories(LibreSSL/include)
 
     # All other modules can be pulled in without further configuration.
     add_subdirectory(Abstractions)

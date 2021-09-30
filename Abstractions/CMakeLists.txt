@@ -41,12 +41,7 @@ elseif(MSVC)
     )
 endif()
 
-include_directories(../KQueue/include)
-include_directories(${LIBRESSL_INCLUDE_DIR})
-
 add_library(${This} SHARED ${Sources} ${Headers})
-
-find_package(LibreSSL REQUIRED)
 
 target_include_directories(${This} PUBLIC include)
 
@@ -61,6 +56,6 @@ if(LINUX)
             )
 endif(LINUX)
 
-target_link_libraries(${This} ${OPENSSL_LIBRARIES})
+target_link_libraries(${This})
 
 # add_subdirectory(test)

@@ -38,8 +38,6 @@ endif()
 
 add_library(${This} SHARED ${Sources} ${Headers})
 
-find_package(LibreSSL REQUIRED)
-
 target_include_directories(${This} PUBLIC include)
 
 set_target_properties(${This} PROPERTIES
@@ -50,10 +48,9 @@ if(LINUX)
     target_link_libraries(${This}
             pthread
             dl
-            ${OPENSSL_LIBRARIES}
             )
 endif(LINUX)
 
-target_link_libraries(${This} SocketServer LibreSSL::TLS Abstractions)
+target_link_libraries(${This} SocketServer Abstractions)
 
 # add_subdirectory(test)
