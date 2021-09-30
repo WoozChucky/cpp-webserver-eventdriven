@@ -78,12 +78,9 @@ if(ParentDirectory STREQUAL "")
         add_definitions(-DMACOS)
     elseif(UNIX AND NOT APPLE)
         add_definitions(-DLINUX)
+        set(LINUX TRUE)
     elseif(MSVC)
         add_definitions(-DWINDOWS)
-    endif()
-
-    if(UNIX AND NOT APPLE)
-        set(LINUX TRUE)
     endif()
 
     # LibreSSL
@@ -100,6 +97,7 @@ if(ParentDirectory STREQUAL "")
 
     if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
         add_subdirectory(KQueue) #Kqueue is already built in MacOS by default.
+        include_directories(KQueue/include)
     endif()
 
     # All other modules can be pulled in without further configuration.

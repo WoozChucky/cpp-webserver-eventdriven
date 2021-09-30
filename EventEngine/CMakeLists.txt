@@ -1,4 +1,4 @@
-# CMakeLists.txt for SocketServer
+# CMakeLists.txt for EventEngine
 #
 # © 2019 by Nuno Silva
 
@@ -48,7 +48,7 @@ set_target_properties(${This} PROPERTIES
         )
 
 if(LINUX)
-    message("This is unix!")
+    message("This is Linux!")
     target_link_libraries(${This}
             pthread
             dl

@@ -11,7 +11,6 @@
 
 #include <sys/event.h>
 
-using Event         = struct kevent;
 
 using U8            = uint8_t;
 using U16           = uint16_t;
@@ -28,8 +27,12 @@ using R64           = double;
 
 using Memory        = void*;
 
-using SocketHandle  = S32;
 using EventHandle   = S32;
+using Event         = struct kevent;
+
+using TLS           = struct tls;
+using TLSConfig     = struct tls_config;
+using SocketHandle  = S32;
 
 enum IPType {
     Unsupported = 0x00,

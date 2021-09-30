@@ -34,8 +34,6 @@ using SocketAddress     = struct sockaddr;
 using SocketAddressIn   = struct sockaddr_in;
 using SocketAddressIn6  = struct sockaddr_in6;
 using SocketStorage     = struct sockaddr_storage;
-using TLS               = struct tls;
-using TLSConfig         = struct tls_config;
 
 /**
  * @brief The SocketServer configuration to be passed on initialization.
@@ -79,8 +77,6 @@ typedef struct ServerConfiguration {
     std::string SSLPrivateKeyPath;
 
 } ServerConfiguration ;
-
-
 
 using OnMessageDelegate = std::function<void(SocketContext* ctx, std::string& message)>;
 using OnClientDelegate =  std::function<void(SocketContext* ctx)>;
