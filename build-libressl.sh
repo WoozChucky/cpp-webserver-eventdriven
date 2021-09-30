@@ -18,4 +18,5 @@ make -j $NPROC
 
 sudo make install -j $NPROC
 
-cd ..
+cd .. # build
+cd .. # root libressl
