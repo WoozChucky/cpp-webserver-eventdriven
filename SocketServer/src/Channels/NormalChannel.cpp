@@ -12,7 +12,7 @@
 
 NormalChannel::NormalChannel() {
 
-	this->memoryPool = new MemoryPool(4096, 5, 100);
+	this->memoryPool = new MemoryPool(1024, 5, 100);
 }
 
 void NormalChannel::AcceptConnection(SocketHandle handle, SocketContext* outContext) {
@@ -44,21 +44,27 @@ std::string NormalChannel::Read(SocketContext* ctx) {
 
 	auto readStream = this->memoryPool->Allocate<char>();
 
-	auto totalReadBytes = 0;
-	auto lastReadBytes = -1;
+	S32 totalReadBytes = 0;
+	S32 lastReadBytes;
 
 	std::string fullBufferedRequest;
 
-	while (lastReadBytes == -1 && totalReadBytes == 0) {
+	bool finishedReceivingData = false;
+
+	while (!finishedReceivingData) {
 
 		lastReadBytes = recv(ctx->Socket.Handle, readStream, this->memoryPool->BlockSize(), 0);
 		
-		if (lastReadBytes >= 0)
+		if (lastReadBytes >= 0) {
 			totalReadBytes += lastReadBytes;
-
-		fullBufferedRequest.append(readStream);
+			fullBufferedRequest.append(readStream);
+		}
 
 		memset(readStream, 0, this->memoryPool->BlockSize());
+
+		if (lastReadBytes == -1) {
+			finishedReceivingData = true;
+		}
 	}
 
 	this->memoryPool->Release(readStream);

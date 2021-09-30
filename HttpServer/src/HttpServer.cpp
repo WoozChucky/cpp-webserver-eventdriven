@@ -191,7 +191,7 @@ void HttpServer::OnClientMessage(SocketContext *ctx, const std::string &messageB
 
     auto written = this->WriteResponse(ctx, response);
 
-    TRACE("Request took %f ms", timer->Stop() * 0.001)
+    TRACE("Request took %f ms", timer->Stop() * 0.01)
     TRACE("Written %d bytes as response.", written)
 
     if (request->GetHeader("Connection") == "close")
