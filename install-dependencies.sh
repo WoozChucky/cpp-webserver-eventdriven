@@ -2,7 +2,7 @@
 
 #NPROC=$(nproc)
 
-sudo apt-get install -y automake autoconf libtool perl ninja-build build-essential libssl-dev
+sudo apt-get install -y automake autoconf libtool perl ninja-build build-essential
 
 #wget https://github.com/Kitware/CMake/releases/download/v3.20.0/cmake-3.20.0.tar.gz
 
