@@ -15,12 +15,21 @@
 #include <functional>
 #include <stdexcept>
 
+template<class>
+struct result_of; // Causes a static assert
+
+template <class Fn, class... ArgTypes>
+struct result_of<Fn(ArgTypes...)>;
+
+template<class T>
+using result_of_t = typename result_of<T>::type;
+
 class ThreadPool {
 public:
     explicit ThreadPool(size_t);
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args)
-    -> std::future<typename std::result_of<F(Args...)>::type>;
+    -> std::future<typename result_of<F(Args...)>::type>;
     ~ThreadPool();
 private:
     // need to keep track of threads so we can join them
@@ -65,9 +74,9 @@ inline ThreadPool::ThreadPool(size_t threads)
 // add new work item to the pool
 template<class F, class... Args>
 auto ThreadPool::enqueue(F&& f, Args&&... args)
--> std::future<typename std::result_of<F(Args...)>::type>
+-> std::future<typename result_of<F(Args...)>::type>
 {
-    using return_type = typename std::result_of<F(Args...)>::type;
+    using return_type = typename result_of<F(Args...)>::type;
 
     auto task = std::make_shared< std::packaged_task<return_type()> >(
             std::bind(std::forward<F>(f), std::forward<Args>(args)...)

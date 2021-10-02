@@ -17,7 +17,9 @@ get_directory_property(ParentDirectory PARENT_DIRECTORY)
 if(ParentDirectory STREQUAL "")
     # Define option for linking with the runtime statically.
     if(MSVC)
-        option(RUNTIME_STATIC_LINKAGE "Link with runtime library statically" OFF)
+        option(RUNTIME_STATIC_LINKAGE "Link with runtime library statically" ON)
+        #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+        #set(BUILD_SHARED_LIBS TRUE)
     endif(MSVC)
 
     # If the runtime static linkage option is turned on, replace
@@ -81,6 +83,13 @@ if(ParentDirectory STREQUAL "")
         set(LINUX TRUE)
     elseif(MSVC)
         add_definitions(-DWINDOWS)
+
+        set(BUILD_SHARED_LIBS ON)
+        set(LIBRESSL_ROOT_DIR "C:/Program Files (x86)/LibreSSL")
+        set(LIBRESSL_CRYPTO_LIBRARY "C:/Program Files (x86)/LibreSSL/lib/crypto-46.lib")
+        set(LIBRESSL_TLS_LIBRARY "C:/Program Files (x86)/LibreSSL/lib/tls-20.lib")
+        set(LIBRESSL_SSL_LIBRARY "C:/Program Files (x86)/LibreSSL/lib/ssl-48.lib")
+
     endif()
 
     # LibreSSL
@@ -89,7 +98,7 @@ if(ParentDirectory STREQUAL "")
 
     set(LIBRESSL_APPS OFF)
     set(LIBRESSL_TESTS OFF)
-    set(BUILD_SHARED_LIBS OFF)
+    #set(BUILD_SHARED_LIBS OFF)
 
     #find_package(LibreSSL 3.0.0 REQUIRED)
 

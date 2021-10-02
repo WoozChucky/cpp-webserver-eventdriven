@@ -90,3 +90,11 @@ unsigned int Net::Utils::GetPortFromAddress(SocketAddress *address) {
 void Net::Utils::GetPortFromAddress(SocketAddress *address, U8& port) {
     port = GetPortFromAddress(address);
 }
+
+void Net::Utils::SetNonBlocking(SocketHandle handle) {
+    fcntl(handle, F_SETFL, O_NONBLOCK); // Mark socket as non blocking
+}
+
+void Net::Utils::CloseSocket(SocketHandle handle) {
+    close(handle);
+}

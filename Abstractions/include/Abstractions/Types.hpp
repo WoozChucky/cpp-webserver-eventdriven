@@ -32,7 +32,24 @@ using Event         = struct kevent;
 
 using TLS           = struct tls;
 using TLSConfig     = struct tls_config;
+
+#if WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#define bzero(b,len) (memset((b), '\0', (len)), (void) 0)
+#define bcopy(b1,b2,len) (memmove((b2), (b1), (len)), (void) 0)
+
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+using SocketHandle  = SOCKET;
+#endif
+#if MACOS
 using SocketHandle  = S32;
+#endif
+#if LINUX
+using SocketHandle  = S32;
+#endif
+
 
 enum IPType {
     Unsupported = 0x00,

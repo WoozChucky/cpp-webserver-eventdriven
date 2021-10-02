@@ -23,6 +23,10 @@ namespace Net {
 
         static unsigned int GetPortFromAddress(SocketAddress *address);
         static void GetPortFromAddress(SocketAddress *address, U8& port);
+
+        static void CloseSocket(SocketHandle handle);
+        static void SetNonBlocking(SocketHandle handle);
+
     };
 
 }

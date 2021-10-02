@@ -21,17 +21,22 @@ set(Headers
 set(Sources
         src/MemoryPool.cpp
         src/File.cpp
-        src/DynamicLibrary.cpp
-        src/DynamicLibraryImpl.hpp
         src/Timer.cpp)
 
 if(APPLE)
+    add_definitions(-DMACOS)
     list(APPEND Sources
+            src/MacOS/DynamicLibrary.cpp
+            src/MacOS/DynamicLibraryImpl.hpp
             src/MacOS/Directory.cpp)
 elseif(LINUX)
+    add_definitions(-DLINUX)
     list(APPEND Sources
+            src/Linux/DynamicLibrary.cpp
+            src/Linux/DynamicLibraryImpl.hpp
             src/Linux/Directory.cpp)
 elseif(MSVC)
+    add_definitions(-DWINDOWS)
     list(APPEND Sources )
 
     add_definitions(

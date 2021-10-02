@@ -10,6 +10,8 @@
 #include <Abstractions/Format.hpp>
 #include <Abstractions/ThreadPool.hpp>
 #include <Abstractions/Timer.hpp>
+#include <cassert>
+#include <Socket/NetUtils.hpp>
 
 Server::Server()
         : serverSocket(0), serverAddress{}, manager{nullptr}, handler{nullptr}, channel{nullptr},
@@ -34,6 +36,13 @@ void Server::Setup() {
     this->serverAddress.sin_addr.s_addr = INADDR_ANY;
     bzero(&(this->serverAddress.sin_zero), sizeof(this->serverAddress.sin_zero));
 
+    // Initialize Winsock
+    WSADATA wsaData;
+    int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if (iResult != 0) {
+        TRACE("WSAStartup failed with error: %d", iResult)
+    }
+
     this->serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
     for(auto option : this->_configuration->SocketOptions) {
@@ -57,11 +66,11 @@ void Server::Setup() {
 void Server::Boot() {
     assert(this->_configuration != nullptr);
 
-    fcntl(this->serverSocket, F_SETFL, O_NONBLOCK); // Mark server socket as non blocking
+    Net::Utils::SetNonBlocking(this->serverSocket); // Mark server socket as non blocking
 
     if (bind(this->serverSocket, (struct sockaddr *)&this->serverAddress, sizeof(SocketAddress)) < 0) {
         TRACE("%s %s.", "Socket bind() failed.", strerror(errno));
-        close(this->serverSocket);
+        Net::Utils::CloseSocket(this->serverSocket);
         throw std::runtime_error(
                     Format::This("Socket bind() failed. %s.", strerror(errno))
                     );
@@ -69,7 +78,7 @@ void Server::Boot() {
 
     if (listen(this->serverSocket, this->_configuration->MaxQueuedConnections) < 0) {
         TRACE("%s %s.", "Socket listen() failed.", strerror(errno));
-        close(this->serverSocket);
+        Net::Utils::CloseSocket(this->serverSocket);
         throw std::runtime_error(
                 Format::This("Socket listen() failed. %s.", strerror(errno))
                 );
@@ -96,7 +105,7 @@ void Server::Terminate() {
     this->GetChannel()->Terminate();
 
     // close the server file descriptor
-    close(this->GetHandle());
+    Net::Utils::CloseSocket(this->GetHandle());
 }
 
 void Server::SetConfiguration(ServerConfiguration *configuration) {
@@ -145,10 +154,10 @@ bool Server::SetSocketOption(int option) const {
     int optval = 1;
     socklen_t  optlen = sizeof(optval);
 
-    auto error = setsockopt(this->serverSocket, SOL_SOCKET, option, &optval, optlen) < 0;
+    auto error = setsockopt(this->serverSocket, SOL_SOCKET, option, reinterpret_cast<const char *>(&optval), optlen) < 0;
     if(error) {
         perror("setsockpot()");
-        close(this->serverSocket);
+        Net::Utils::CloseSocket(this->GetHandle());
     }
 
     return optval;
@@ -159,11 +168,11 @@ U16 Server::GetSocketOption(int option) const {
     int optval = 1;
     socklen_t  optlen = sizeof(optval);
 
-    auto error = getsockopt(this->serverSocket, SOL_SOCKET, option, &optval, &optlen) < 0;
+    auto error = getsockopt(this->serverSocket, SOL_SOCKET, option, reinterpret_cast<char *>(&optval), &optlen) < 0;
 
     if (error) {
         perror("getsockopt()");
-        close(this->serverSocket);
+        Net::Utils::CloseSocket(this->GetHandle());
     }
 
     return optval;

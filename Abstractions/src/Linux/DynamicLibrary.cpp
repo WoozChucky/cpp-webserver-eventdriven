@@ -39,7 +39,7 @@ std::string internal_sprintf(const char* format, ...) {
 
 
 std::string DynamicLibraryImpl::GetDynamicLibraryFileExtension() {
-    return "dylib";
+    return "so";
 }
 
 DynamicLibrary::DynamicLibrary()

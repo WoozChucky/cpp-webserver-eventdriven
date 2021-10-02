@@ -15,23 +15,29 @@ set(Headers
         include/Socket/Server.hpp)
 
 set(Sources
-        src/NetUtils.cpp
-        src/Channels/NormalChannel.cpp
-        src/Channels/SecureChannel.cpp
         src/Server.cpp)
 
-if(MSVC)
+if(APPLE)
+    list(APPEND Sources
+            src/Channels/MacOS/NormalChannel.cpp
+            src/Channels/MacOS/SecureChannel.cpp
+            src/MacOS/NetUtils.cpp)
+elseif(LINUX)
+    list(APPEND Sources
+            src/Channels/Linux/NormalChannel.cpp
+            src/Channels/Linux/SecureChannel.cpp
+            src/Linux/NetUtils.cpp)
+elseif(MSVC)
+    list(APPEND Sources
+            src/Channels/Win/NormalChannel.cpp
+            src/Channels/Win/SecureChannel.cpp
+            src/Win/NetUtils.cpp)
+
     add_definitions(
             -DUNICODE -D_UNICODE
             -D_CRT_SECURE_NO_WARNINGS
             -DEXPORT_LIBRARY
     )
-endif()
-
-# Options
-option(DEBUG_ENABLED "Enable DEBUG info to STDOUT" ON)
-if(DEBUG_ENABLED)
-    add_definitions(-DDEBUG_ENABLED)
 endif()
 
 add_library(${This} SHARED ${Sources} ${Headers})

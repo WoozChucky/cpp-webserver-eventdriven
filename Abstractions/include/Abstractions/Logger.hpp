@@ -10,10 +10,10 @@
 #include <cstdarg>
 
 #define TRACE(fmt, ...) \
-        fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __PRETTY_FUNCTION__, __LINE__,  __VA_ARGS__);
+        fprintf(stderr, "[DBG - %s] %s:%d:: " fmt "\n", __TIME__, __FUNCSIG__, __LINE__,  __VA_ARGS__);
 
 #if DEBUG_ENABLED
-
+// __PRETTY_FUNCTION__
 #else
     #define TRACE(fmt, ...) \
      //

@@ -52,6 +52,15 @@ if(LINUX)
             )
 endif(LINUX)
 
-target_link_libraries(${This} Abstractions)
+if(WINDOWS)
+    target_link_libraries(${This}
+            kqueue
+            )
+endif(WINDOWS)
+
+if(APPLE)
+    target_link_libraries(${This} Abstractions)
+endif(APPLE)
+
 
 # add_subdirectory(test)
