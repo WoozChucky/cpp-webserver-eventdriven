@@ -5,6 +5,10 @@
 #include <Http/HttpRouter.hpp>
 #include <utility>
 
+#if WINDOWS
+#undef DELETE
+#endif
+
 void HttpRouter::AddRoute(const std::string& path, const HttpHandler& handler) {
 
     if (this->_routes.count(path) < 1) {

@@ -33,6 +33,8 @@ elseif(MSVC)
             src/Channels/Win/SecureChannel.cpp
             src/Win/NetUtils.cpp)
 
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
     add_definitions(
             -DUNICODE -D_UNICODE
             -D_CRT_SECURE_NO_WARNINGS

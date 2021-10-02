@@ -18,7 +18,6 @@ if(ParentDirectory STREQUAL "")
     # Define option for linking with the runtime statically.
     if(MSVC)
         option(RUNTIME_STATIC_LINKAGE "Link with runtime library statically" ON)
-        #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
         #set(BUILD_SHARED_LIBS TRUE)
     endif(MSVC)
 
@@ -111,6 +110,7 @@ if(ParentDirectory STREQUAL "")
 
     add_subdirectory(LibreSSL)
     include_directories(LibreSSL/include)
+    include_directories(Abstractions/include)
 
     # All other modules can be pulled in without further configuration.
     add_subdirectory(Abstractions)

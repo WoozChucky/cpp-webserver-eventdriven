@@ -4,6 +4,7 @@
 
 #include <Events/EventManager.hpp>
 #include <Abstractions/Logger.hpp>
+#include <sys/event.h>
 
 EventManager::EventManager() {
     //this->handle = epoll_create(32);

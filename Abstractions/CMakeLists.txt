@@ -37,7 +37,10 @@ elseif(LINUX)
             src/Linux/Directory.cpp)
 elseif(MSVC)
     add_definitions(-DWINDOWS)
-    list(APPEND Sources )
+    list(APPEND Sources
+            src/Win/Directory.cpp)
+
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
     add_definitions(
             -DUNICODE -D_UNICODE
@@ -61,6 +64,6 @@ if(LINUX)
             )
 endif(LINUX)
 
-target_link_libraries(${This})
+target_link_libraries(${This} kqueue)
 
 # add_subdirectory(test)

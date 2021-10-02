@@ -5,6 +5,10 @@
 #ifndef HTTPMETHOD_HPP
 #define HTTPMETHOD_HPP
 
+#if WINDOWS
+#undef DELETE
+#endif
+
 enum HttpMethod {
     GET         = 0x00,
     HEAD        = 0x01,

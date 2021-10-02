@@ -20,8 +20,6 @@ endif()
 
 add_executable(${This} ${Sources} ${Headers})
 
-find_package(LibreSSL REQUIRED)
-
 target_include_directories(${This} PUBLIC include)
 
 set_target_properties(${This} PROPERTIES
@@ -36,4 +34,4 @@ if(UNIX)
             )
 endif(UNIX)
 
-target_link_libraries(${This} Abstractions SocketServer HttpServer LibreSSL::TLS)
+target_link_libraries(${This} Abstractions SocketServer HttpServer tls)

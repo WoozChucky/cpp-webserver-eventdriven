@@ -20,7 +20,11 @@ endif()
 
 add_executable(${This} ${Sources} ${Headers})
 
-find_package(LibreSSL REQUIRED)
+set(LIBRESSL_ROOT_DIR "C:/Program Files (x86)/LibreSSL")
+set(LIBRESSL_CRYPTO_LIBRARY "C:/Program Files (x86)/LibreSSL/lib/crypto-46.lib")
+set(LIBRESSL_TLS_LIBRARY "C:/Program Files (x86)/LibreSSL/lib/tls-20.lib")
+set(LIBRESSL_SSL_LIBRARY "C:/Program Files (x86)/LibreSSL/lib/ssl-48.lib")
+#find_package(LibreSSL REQUIRED)
 
 target_include_directories(${This} PUBLIC include)
 
@@ -36,4 +40,8 @@ if(UNIX)
             )
 endif(UNIX)
 
-target_link_libraries(${This} Abstractions SocketServer HttpServer LibreSSL::TLS)
+if(MSVC)
+    target_link_libraries(${This} Abstractions SocketServer HttpServer tls ws2_32)
+endif(MSVC)
+
+target_link_libraries(${This} Abstractions SocketServer HttpServer tls)

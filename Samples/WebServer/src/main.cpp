@@ -69,9 +69,6 @@ int main(int argc, char **argv) {
     auto pool = new ThreadPool(1);
 
     try {
-        pool->enqueue([http]() -> void {
-            //http->Boot();
-        });
         http->Boot();
     } catch (std::exception& e) {
         TRACE("%s", e.what());

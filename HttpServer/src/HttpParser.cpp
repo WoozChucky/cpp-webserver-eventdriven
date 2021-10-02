@@ -7,6 +7,10 @@
 #include <cstring>
 #include <sstream>
 
+#if WINDOWS
+#undef DELETE
+#endif
+
 HttpParser::HttpParser(HttpProtocol protocol) {
     this->_protocol = protocol;
 
