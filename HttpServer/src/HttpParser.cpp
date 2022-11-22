@@ -132,6 +132,7 @@ Buffer *HttpParser::BufferFromResponse(HttpResponse* response) {
 
     ss << "HTTP/" << GetReadableProtocol(response->GetProtocol()) << " " << GetReadableStatusCode(response->GetStatusCode()) << "\r\n";
     ss << "Date: Mon, 16 Sep 2019 09:10:10 GMT\r\n"
+		  "Server: cpp-webserver-eventdriven-1.0\r\n"
           "Connection: Keep-Alive\r\n"
           "Content-Type: application/json\r\n"
           "Content-Length: "<< body.length() <<"\r\n"
