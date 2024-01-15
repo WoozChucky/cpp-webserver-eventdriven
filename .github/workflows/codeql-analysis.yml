@@ -37,7 +37,7 @@ jobs:
 
     # Checkout repo with submodules recursively
     - name: Checkout repository
-      uses: actions/checkout@v4.0.0
+      uses: actions/checkout@v4.1.1
       with:
         submodules: 'true'
     
